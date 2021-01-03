@@ -1,0 +1,46 @@
+const DAY = [
+  { name: 'Quang mây, nắng nhiều', icon: require('../../assets/images/ic_weather_day_1.png') },
+  { name: 'Ít mây, nắng nhiều', icon: require('../../assets/images/ic_weather_day_2.png') },
+  { name: 'Nắng nóng', icon: require('../../assets/images/ic_weather_day_3.png') },
+  { name: 'Nắng gián đoạn', icon: require('../../assets/images/ic_weather_day_4.png') },
+  { name: 'Có sương mù', icon: require('../../assets/images/ic_weather_day_night_5.png') },
+  { name: 'Nhiều mây, không mưa', icon: require('../../assets/images/ic_weather_day_night_6.png') },
+  { name: 'Trời rét, không mưa', icon: require('../../assets/images/ic_weather_day_night_7.png') },
+  { name: 'Mưa rào gián đoạn', icon: require('../../assets/images/ic_weather_day_8.png') },
+  { name: 'Mưa rào và giông gián đoạn', icon: require('../../assets/images/ic_weather_day_night_9.png') },
+  { name: 'Mưa phùn', icon: require('../../assets/images/ic_weather_day_night_10_11.png') },
+  { name: 'Mưa phùn và sương mù', icon: require('../../assets/images/ic_weather_day_night_10_11.png') },
+  { name: 'Mưa nhỏ', icon: require('../../assets/images/ic_weather_day_night_12.png') },
+  { name: 'Mưa rào', icon: require('../../assets/images/ic_weather_day_night_13_14.png') },
+  { name: 'Mưa vừa, mưa to', icon: require('../../assets/images/ic_weather_day_night_13_14.png') },
+  { name: 'Mưa đá', icon: require('../../assets/images/ic_weather_day_night_15.png') },
+  { name: 'Mưa dông', icon: require('../../assets/images/ic_weather_day_16.png') },
+  { name: 'Trời rét, có mưa', icon: require('../../assets/images/ic_weather_day_night17.png') },
+  { name: 'Trời rét, có băng giá', icon: require('../../assets/images/ic_weather_day_night_18.png') },
+]
+
+const NIGHT = [
+  { name: 'Quang mây', icon: require('../../assets/images/ic_weather_night_1.png') },
+  { name: 'Ít mây', icon: require('../../assets/images/ic_weather_night_2.png') },
+  { name: 'Không mưa', icon: require('../../assets/images/ic_weather_night_3_4.png') },
+  { name: 'Không mưa', icon: require('../../assets/images/ic_weather_night_3_4.png') },
+  { name: 'Có sương mù', icon: require('../../assets/images/ic_weather_day_night_5.png') },
+  { name: 'Nhiều mây, không mưa', icon: require('../../assets/images/ic_weather_day_night_6.png') },
+  { name: 'Trời rét, không mưa', icon: require('../../assets/images/ic_weather_day_night_7.png') },
+  { name: 'Mưa rào gián đoạn', icon: require('../../assets/images/ic_weather_night_8.png') },
+  { name: 'Mưa rào và giông gián đoạn', icon: require('../../assets/images/ic_weather_day_night_9.png') },
+  { name: 'Mưa phùn', icon: require('../../assets/images/ic_weather_day_night_10_11.png') },
+  { name: 'Mưa phùn và sương mù', icon: require('../../assets/images/ic_weather_day_night_10_11.png') },
+  { name: 'Mưa nhỏ', icon: require('../../assets/images/ic_weather_day_night_12.png') },
+  { name: 'Mưa rào', icon: require('../../assets/images/ic_weather_day_night_13_14.png') },
+  { name: 'Mưa vừa, mưa to', icon: require('../../assets/images/ic_weather_day_night_13_14.png') },
+  { name: 'Mưa đá', icon: require('../../assets/images/ic_weather_day_night_15.png') },
+  { name: 'Mưa dông', icon: require('../../assets/images/ic_weather_night_16.png') },
+  { name: 'Trời rét, có mưa', icon: require('../../assets/images/ic_weather_day_night17.png') },
+  { name: 'Trời rét, có băng giá', icon: require('../../assets/images/ic_weather_day_night_18.png') },
+]
+
+export default ICON = {
+  DAY,
+  NIGHT,
+}
