@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, RefreshControl, ActivityIndicator } from 'react-native';
 import { Container, Content, Button, Text } from 'native-base';
 import GetLocation from 'react-native-get-location'
 import STG from '../../service/storage';
@@ -12,7 +12,7 @@ import IC from '../elements/icon';
 import NavigationService from '../../service/navigate';
 import Address from '../elements/Address';
 import _ from 'lodash';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import Weather24 from '../Main_24H';
 
 const CON = ({ image, title, value }) => {
   return (
@@ -64,29 +64,13 @@ export default class main extends Component {
     };
   }
 
-  _menu = null;
-
-  setMenuRef = ref => {
-    this._menu = ref;
-  };
-
-  hideMenu = () => {
-    this._menu.hide();
-  };
-
-  showMenu = () => {
-    this._menu.show();
-  };
-
-
   componentDidMount() {
     setTimeout(() => {
-      this.getLocation();
+      // this.getLocation();
     }, 500)
     STG.getData('user').then(u => {
-      this.getCrops(u.subscribe);
+      // this.getCrops(u.subscribe);
     })
-    console.log('ahhih')
   }
 
   getLocation() {
@@ -179,18 +163,17 @@ export default class main extends Component {
     var h = d.getHours();
     const ICON = h <= 19 && h >= 7 ? IC.DAY : IC.NIGHT
     return (
-      <Container style={{ backgroundColor: 'white' }}>
-        <Header height={20} />
-        <Content>
-          <View style={{ backgroundColor: '#4B8266', flex: 1, alignItems: 'center', padding: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <View style={{ height: 40, width: 40 }} />
-            {latLong != null && <Address latLong={latLong} full style={{ fontSize: 20, fontWeight: 'bold', color: 'white', textAlign: 'center' }} />}
-            <Image
-              style={{ width: 30, height: 30, opacity: 0 }}
-              source={require('../../assets/images/ic_dot_menu.png')}
-            />
-          </View>
-          <View style={{ backgroundColor: '#4B8266', flex: 1, padding: 10, flexDirection: 'row', justifyContent: 'center' }}>
+      <Container style={{ backgroundColor: 'transparent' }}>
+        <Content
+          style={{ backgroundColor: 'transparent' }}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              // onRefresh={}
+              tintColor="white"
+            />}
+        >
+          <View style={{ backgroundColor: 'transparent', flex: 1, padding: 10, flexDirection: 'row', justifyContent: 'center' }}>
             {loading ? <ActivityIndicator size="large" color="white" />
               :
               <TouchableOpacity onPress={() => {
@@ -204,81 +187,21 @@ export default class main extends Component {
             <Text style={{ fontSize: 60, color: 'white' }}>{resultGmos && Math.round(resultGmos.air_temperature) || '--'}</Text>
             <Text style={{ fontSize: 30, color: 'white' }}>°C</Text>
           </View>
-          <View style={{ backgroundColor: '#4B8266', flex: 1, padding: 10, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ backgroundColor: 'transparent', flex: 1, padding: 10, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontSize: 17, color: 'white' }}>{`Nhiệt độ cảm nhận ${resultGmos && Math.round(resultGmos.temperatureFeel).toString() || '--'}°C`} </Text>
             <Text style={{ fontSize: 17, color: 'white' }}>{resultGmos && ICON[Math.round(resultGmos.weather) - 1].name || '--'}</Text>
           </View>
-          <TouchableHighlight onPress={() => {
-            NavigationService.navigate('Forecast', {});
-          }} >
-            <View style={{ backgroundColor: '#4B8266', marginTop: 0, alignContent: 'flex-start', flexDirection: 'row', justifyContent: 'center' }}>
-              <CON image={require('../../assets/images/iqa.png')} title={`Chất lượng\nkhông khí`} value={weather && weather.dataPamair && weather.dataPamair.aqi && Math.round(weather.dataPamair.aqi.value).toString() || '--'} />
-              <CON image={require('../../assets/images/uv.png')} title="Chỉ số UV" value={weather && weather.uvIndex || '--'} />
-              <CON image={require('../../assets/images/rain_home.png')} title="Khả năng mưa" value={(resultGmos && Math.round(resultGmos.probability_rain).toString() || '--') + '%'} />
+          <Weather24 latLong={{ lat: 21.028511, lng: 105.804817 }} />
+
+          <TouchableOpacity>
+            <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: 50, position: 'absolute', top: 0, left: 0 }} />
+              <Text style={{ width: '100%', textAlign: 'center', color: 'white' }}>
+                {'14 Ngày Tới'}
+              </Text>
             </View>
-          </TouchableHighlight>
-          <View style={{ paddingRight: 10, paddingLeft: 10, flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#4B8266' }}>
-            <TouchableOpacity onPress={() => console.log()}>
-              <Image
-                style={{ width: 25, height: 25 }}
-                source={require('../../assets/images/arrow_left_white.png')}
-              />
-            </TouchableOpacity>
-            <ScrollView
-              style={{ margin: 0 }}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            >
-              {crops.map((item, index) => {
-                return (
-                  <View>
-                    {item.check &&
-                      <Image
-                        tintColor={COLOR[selectedCrop]}
-                        style={{ tintColor: COLOR[selectedCrop], position: 'absolute', top: 0, left: 0, marginRight: 0, marginLeft: 0 }}
-                        source={require('../../assets/images/bg_selected_scrops_1.png')}
-                      />}
-                    <View style={{ flex: 1, padding: 4 }}>
-                      <TouchableOpacity onPress={() => this.handleChange(index)}>
-                        <Image
-                          style={{ width: 50, height: 50, borderRadius: 30, marginRight: 15, marginLeft: 17 }}
-                          source={{ uri: item.image }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )
-              })}
-            </ScrollView>
-            <TouchableOpacity onPress={() => {
-              NavigationService.navigate('Crop', { reload: () => this.reload() });
-            }}>
-              <Image
-                style={{ width: 35, height: 35 }}
-                source={require('../../assets/images/edit_white.png')}
-              />
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
 
-          <View style={{ backgroundColor: COLOR[selectedCrop], alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-            <BUT image={require('../../assets/images/italy.png')} title={`Mẹo canh tác`} onPress={() => {
-              const par = crops.filter(e => e.check == true)
-              NavigationService.navigate('Tricky', { para: par[0] });
-            }} />
-            <BUT image={require('../../assets/images/weather_tips.png')} title={`Thời tiết và cây trồng`} onPress={() => {
-              const par = crops.filter(e => e.check == true)
-              NavigationService.navigate('Weather', { para: par[0] });
-            }} />
-          </View>
-
-          <View style={{ alignItems: 'center', flex: 1 }}>
-            <Button testID="BTN_SIGN_IN" block primary style={styles.btn_sign_in} onPress={() => {
-              const par = crops.filter(e => e.check == true)
-              NavigationService.navigate('Question', { para: par[0] });
-            }}>
-              <Text style={styles.regularText}>{'Đặt câu hỏi'}</Text>
-            </Button>
-          </View>
         </Content>
       </Container>
     );

@@ -12,11 +12,8 @@ import IC from '../elements/icon';
 import NavigationService from '../../service/navigate';
 import Address from '../elements/Address';
 import _ from 'lodash';
-import {
-  PageControlAji,
-} from 'react-native-chi-page-control';
-import Weather from '../Weather';
 import TopTab from './toptab';
+import MarqueeLabel from 'react-native-lahk-marquee-label';
 
 const { width, height } = Dimensions.get('window');
 
@@ -69,6 +66,10 @@ export default class main extends Component {
       latLong: null,
       page: 0,
     };
+
+    this.currentPage = 0;
+
+    this.navigation = null;
   }
 
   _menu = null;
@@ -88,7 +89,7 @@ export default class main extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      this.getLocation();
+      // this.getLocation();
     }, 500)
     STG.getData('user').then(u => {
       this.getCrops(u.subscribe);
@@ -178,10 +179,6 @@ export default class main extends Component {
     })
   }
 
-  onScrollEnd(e, length) {
-    this.setState({ page: e.nativeEvent.contentOffset.x / ((length - 1) * width) })
-  }
-
   render() {
     const { crops, selectedCrop, weather, loading, latLong, page } = this.state;
     const resultGmos = weather.resultGmos && weather.resultGmos[0]
@@ -190,27 +187,41 @@ export default class main extends Component {
     const ICON = h <= 19 && h >= 7 ? IC.DAY : IC.NIGHT
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <TopTab />
-        {/* <PageControlAji style={{ alignItems: 'center', width: width }} progress={page} numberOfPages={3} />
-        <FlatList
-          style={{ flex: 1 }}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          horizontal
-          pagingEnabled
-          onScroll={(e) => this.onScrollEnd(e, 3)}
-          data={['', '', '',]}
-          renderItem={({ item }) => (
-            <View style={{ width: width, height: height }}>
-              <Weather />
-            </View>
-          )}
-          numColumns={1}
-          keyExtractor={(item, index) => index}
-        /> */}
-        <Button onPress={() => NavigationService.jumping('2')} >
+        <Image
+          style={{ width: width, height: height, resizeMode: 'cover', position: 'absolute', top: 0, left: 0 }}
+          source={page == 0 ? require('../../assets/images/bg_06.png') : require('../../assets/images/bg_03.png')}
+        />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+          <TouchableOpacity onPress={() => NavigationService.navigate('LocationListScreen', {})}>
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require('../../assets/images/ico_place.png')}
+            />
+          </TouchableOpacity>
+          <View style={{ justifyContent: 'center' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'white', textAlign: 'center' }}>
+              HaNoi
+            </Text>
+          </View>
+          <TouchableOpacity>
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require('../../assets/images/ico_setting.png')}
+            />
+          </TouchableOpacity>
+        </View>
+        <TopTab
+          tabChange={(e) => {
+            if (e != page) {
+              this.setState({ page: e })
+            }
+          }}
+          navi={(navigation) => this.navigation = navigation}
+          onRef={(ref) => this.navigation = ref}
+        />
+        {/* <Button onPress={() => this.navigation.didChangeTab('5')} >
           <Text>sdfds</Text>
-        </Button>
+        </Button> */}
       </SafeAreaView>
     );
   }

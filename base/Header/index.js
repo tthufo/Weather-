@@ -18,16 +18,19 @@ import {
 
 const os = Platform.OS;
 
+const coloring = '#3629EF';
+
 export default class index extends Component {
   render() {
-    const { title, current, total, height } = this.props;
+    const { title, current, total, height, color } = this.props;
     let progress = '';
     if (total != null && current != null) {
       progress = current + '/' + total;
     }
+    const cor = color ? color : coloring
     return (
-      height ? <Header style={{ height: height, backgroundColor: '#4B8266', borderBottomColor: '#4B8266' }} /> :
-        <Header style={{ backgroundColor: '#4B8266', borderBottomColor: '#4B8266' }}>
+      height ? <Header style={{ height: height, backgroundColor: cor, borderBottomColor: cor }} /> :
+        <Header style={{ backgroundColor: cor, borderBottomColor: cor }}>
           {this.renderLeft()}
           <Body
             style={{ flex: 1.5, alignItems: 'center', justifyContent: 'center' }}
@@ -158,8 +161,8 @@ export default class index extends Component {
               style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}
             >
               <Image
-                style={{ width: 12, height: 21, marginRight: 5, marginLeft: 10 }}
-                source={require('../../assets/images/arrow_left_white.png')}
+                style={{ width: 35, height: 35, marginRight: 5, marginLeft: 10 }}
+                source={require('../../assets/images/back_color.png')}
               />
               <Text
                 style={{
@@ -182,23 +185,20 @@ export default class index extends Component {
 
 const styles = StyleSheet.create({
   bodyTitle: {
-    // fontFamily: 'SourceHanSansHW-Regular',
-    color: '#ffffff',
+    color: coloring,
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     textAlign: 'center',
     lineHeight: 22,
   },
   childTitle: {
-    // fontFamily: 'SourceHanSansHW-Regular',
-    color: '#ffffff',
+    color: coloring,
     fontSize: 15,
     textAlign: 'center',
     lineHeight: 22
   },
   label_small: {
-    color: '#ffffff',
-    // fontFamily: 'SourceHanSansHW-Regular',
+    color: coloring,
     lineHeight: 22
   }
 });

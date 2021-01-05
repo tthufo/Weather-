@@ -126,7 +126,7 @@ export default class AutoCompleteInput extends React.Component {
         <View style={styles.textInputContainer} elevation={5}>
           <TextInput
             ref={input => (this._input = input)}
-            value={this.state.loading ? 'Đang tải...' : this.state.text}
+            value={this.state.loading ? this.state.text : this.state.text}
             style={styles.textInput}
             underlineColorAndroid={'transparent'}
             placeholder={'Tìm kiếm'}

@@ -24,6 +24,8 @@ import ForecastScreen from '../src/Forecast';
 
 
 import MainScreen from '../src/Main';
+import LocationListScreen from '../src/LocationList';
+import LocationScreen from '../src/Location';
 
 const AppNavigator = createStackNavigator({
   Root: { screen: RootScreen },
@@ -57,6 +59,8 @@ const AppNavigator = createStackNavigator({
       gesturesEnabled: false,
     }
   },
+  LocationListScreen: { screen: LocationListScreen },
+  LocationScreen: { screen: LocationScreen },
 }, {
   headerMode: 'none',
 });

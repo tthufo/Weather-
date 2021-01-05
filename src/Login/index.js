@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Platform, ActivityIndicator, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Container, Content, Button, Text } from 'native-base';
 import GetLocation from 'react-native-get-location'
-import InputStyled from '../elements/Input/styled';
 import validate, { alert_validation, max, min, required } from '../elements/Input/validators';
 import Toast from 'react-native-simple-toast';
 import STG from "../../service/storage";
@@ -11,7 +10,6 @@ import API from '../apis';
 import axios from 'axios';
 import NavigationService from '../../service/navigate';
 import _ from 'lodash';
-import LocationView from '../Location/LocationView';
 import RBSheet from "react-native-raw-bottom-sheet";
 import RButton from '../elements/RButton';
 import { getUniqueId } from 'react-native-device-info';

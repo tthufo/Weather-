@@ -138,9 +138,10 @@ export default class LocationView extends React.Component {
 
   render() {
     let { inputScale, address } = this.state;
+    const { navigation } = this.props;
     return (
-      <Container>
-        <Header title={'Địa điểm yêu thích'} />
+      <Container style={{ backgroundColor: 'transparent' }}>
+        <Header navigation={navigation} color={'transparent'} title={'Địa điểm yêu thích'} />
         <View style={styles.container}>
           <MapView
             ref={mapView => (this._map = mapView)}
