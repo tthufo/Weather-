@@ -3,8 +3,6 @@ import {
   View, StyleSheet, NativeModules, Dimensions, Platform,
 } from 'react-native';
 import { Text } from 'native-base';
-// import GetLocation from 'react-native-get-location';
-// import Geocoder from 'react-native-geocoding';
 import _ from 'lodash';
 
 const { width } = Dimensions.get('window');

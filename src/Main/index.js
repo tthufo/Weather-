@@ -14,6 +14,7 @@ import Address from '../elements/Address';
 import _ from 'lodash';
 import TopTab from './toptab';
 import MarqueeLabel from 'react-native-lahk-marquee-label';
+import DeviceInfo from 'react-native-device-info';
 
 const { width, height } = Dimensions.get('window');
 
@@ -46,54 +47,25 @@ const BUT = ({ image, title, onPress }) => {
 
 const COLOR = ["#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB", "#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB"]
 
+const DEFAULT = { location_id: -1, location_name: 'Hanoi - Vietnam', latitude: 21.028511, longitude: 105.804817, device_id: DeviceInfo.getUniqueId() }
+
 export default class main extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      login_info: {
-        email: false,
-        password: false
-      },
-      show_validation: false,
-      modalVisible: false,
-      token: null,
       isConnected: true,
-      crops: [],
-      selectedCrop: 0,
       weather: {},
       loading: true,
-      latLong: null,
       page: 0,
     };
 
     this.currentPage = 0;
-
     this.navigation = null;
   }
 
-  _menu = null;
-
-  setMenuRef = ref => {
-    this._menu = ref;
-  };
-
-  hideMenu = () => {
-    this._menu.hide();
-  };
-
-  showMenu = () => {
-    this._menu.show();
-  };
-
-
   componentDidMount() {
-    setTimeout(() => {
-      // this.getLocation();
-    }, 500)
-    STG.getData('user').then(u => {
-      this.getCrops(u.subscribe);
-    })
+    this.getLocation()
   }
 
   getLocation() {
@@ -102,7 +74,7 @@ export default class main extends Component {
       timeout: 15000,
     })
       .then(location => {
-        this.getWeather(location);
+        // this.getWeather(location);
       })
       .catch(error => {
         const { code, message } = error;
@@ -110,77 +82,27 @@ export default class main extends Component {
       })
   }
 
-  async getWeather(location) {
+  async getLocation() {
     this.setState({ loading: true });
-    this.setState({ latLong: { lat: location.latitude, long: location.longitude } })
     try {
-      const show = STG.getData('auto')
-      const weather = await API.home.getWeather({
-        latitude: show ? 21.028511 : location.latitude,
-        longtitude: show ? 105.804817 : location.longitude,
-        type: 1,
+      const weather = await API.home.getWeatherList({
+        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        weather: null,
       });
       this.setState({ loading: false });
-      if (weather.data.statusCode != 200) {
+      if (weather.data.status != 200) {
         return
       }
-      this.setState({ weather: weather.data.data });
+      console.log('===>', weather)
+      this.setState({ weather: weather.data.result });
     } catch (e) {
-      this.setState({ loading: false });
+      this.setState({ loading: false, isRefreshing: false });
       console.log(e)
     }
   }
 
-  async getCrops(subscriber) {
-    var bodyFormData = new FormData();
-    const show = await STG.getData('auto')
-    const userInfo = await STG.getData('token')
-    bodyFormData.append('subscriber', subscriber);
-    axios({
-      method: 'post',
-      url: HOST.BASE_URL + '/appcontent/cropsUser/list-crops-user',
-      data: bodyFormData,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Authorization': 'bearer ' + userInfo.access_token,
-      }
-    }).then(r => {
-      if (r.status != 200) {
-        Toast.show('Lỗi xảy ra, mời bạn thử lại')
-        return;
-      }
-      const resign = r.data.data.filter(e => show ? (e.cropsUserId != null && e.cropsId != 27 && e.cropsId != 28) : e.cropsUserId != null).map((e, index) => {
-        e.check = index == 0 ? true : false;
-        return e;
-      });
-      this.setState({
-        crops: resign.filter(e => e.cropsUserId != null),
-      })
-    }).catch(e => {
-      Toast.show('Lỗi xảy ra, mời bạn thử lại')
-      console.log(e)
-    })
-  }
-
-  handleChange = (index) => {
-    var newData = [...this.state.crops];
-    newData.map(e => {
-      e.check = false
-    })
-    newData[index].check = true;
-    this.setState({ crops: newData, selectedCrop: index });
-  };
-
-  reload() {
-    STG.getData('user').then(u => {
-      this.setState({ selectedCrop: 0 }, () => {
-        this.getCrops(u.subscribe);
-      })
-    })
-  }
-
   render() {
-    const { crops, selectedCrop, weather, loading, latLong, page } = this.state;
+    const { weather, loading, page } = this.state;
     const resultGmos = weather.resultGmos && weather.resultGmos[0]
     var d = new Date();
     var h = d.getHours();

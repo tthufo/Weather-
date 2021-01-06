@@ -58,7 +58,8 @@ export default class AutoCompleteInput extends React.Component {
         let { results } = data;
         if (results.length > 0) {
           let { formatted_address } = results[0];
-          this.props.getAddress(formatted_address)
+          let address = formatted_address.split(',')
+          this.props.getAddress(address.length >= 2 ? `${address[0]} - ${address[1]}` : `${address[0]}`)
           // this.setState({ text: formatted_address });
         }
       });
@@ -140,7 +141,7 @@ export default class AutoCompleteInput extends React.Component {
           {this._getClearButton()}
         </View>
         <View style={styles.listViewContainer}>
-          <AutoCompleteListView predictions={this.state.predictions} />
+          <AutoCompleteListView predictions={this.state.predictions} updateAddress={(text => this.setState({ text }))} />
         </View>
       </Animated.View>
     );

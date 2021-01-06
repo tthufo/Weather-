@@ -12,7 +12,9 @@ import NavigationService from '../../service/navigate';
 import _ from 'lodash';
 import RBSheet from "react-native-raw-bottom-sheet";
 import RButton from '../elements/RButton';
-import { getUniqueId } from 'react-native-device-info';
+// import { getUniqueId } from 'react-native-device-info';
+import DeviceInfo from 'react-native-device-info';
+
 
 const os = Platform.OS;
 
@@ -151,108 +153,9 @@ export default class login extends Component {
   }
 
   render() {
-    // const { show_validation, login_info, checking } = this.state;
     return (
       this.loginView()
     )
-    // return (
-    //   <View style={{ flex: 1 }}>
-    //     <LocationView
-    //       apiKey={"AIzaSyBXBWoCCozdvmjRABdP_VfDiPAsSU1WS2Q"}
-    //       initialLocation={{
-    //         latitude: 37.78825,
-    //         longitude: -122.4324,
-    //       }}
-    //     />
-    //     <Button onPress={() => this.RBSheet.open()} >
-    //       <Text>{'sdfdsfsdf'}</Text>
-    //     </Button>
-    //     <RBSheet
-    //       ref={ref => {
-    //         this.RBSheet = ref;
-    //       }}
-    //       height={300}
-    //       openDuration={250}
-    //       customStyles={{
-    //         container: {
-    //           justifyContent: "center",
-    //           alignItems: "center"
-    //         }
-    //       }}
-    //     >
-    //       <View>
-    //         <Text>{'sdfdsfsdf'}</Text>
-    //       </View>
-    //     </RBSheet>
-    //   </View>
-    // )
-    // return (
-    //   checking ? <View /> :
-    //     <Container>
-    //       <Content>
-    //         <View style={{ justifyContent: 'space-between' }}>
-    //           <View style={{ alignItems: 'center' }}>
-    //             <Image
-    //               style={{ width: 120, height: 120, marginTop: 50 }}
-    //               source={require('../../assets/images/logo.png')}
-    //             />
-    //           </View>
-    //           <Text style={{ marginLeft: 15, marginTop: 15, color: '#4B8266', fontWeight: 'bold', fontSize: 24 }}>Đăng nhập</Text>
-    //           <View>
-    //             <InputStyled
-    //               testID="TXT_EMAIL" label={'Số điện thoại *'}
-    //               parent={this} group="login_info" linkedkey="email"
-    //               typeSet
-    //               validation={validations.email} showValidation={show_validation} keyboardType="number-pad"
-    //               value={login_info.email}
-    //               onChangeText={(text) => {
-    //                 this.setState({
-    //                   login_info: {
-    //                     ...login_info,
-    //                     email: text
-    //                   }
-    //                 })
-    //               }}
-    //             />
-    //             <InputStyled testID="TXT_PASSWORD" label={'Mật khẩu *'}
-    //               parent={this} group="login_info" linkedkey="password" secureTextEntry
-    //               value={login_info.password}
-    //               typeSet
-    //               onChangeText={(text) => {
-    //                 this.setState({
-    //                   login_info: {
-    //                     ...login_info,
-    //                     password: text
-    //                   }
-    //                 })
-    //               }}
-    //               unhidden validation={validations.password} showValidation={show_validation} />
-    //             {
-    //               !this.state.loading && (
-    //                 <Button testID="BTN_SIGN_IN" block primary style={styles.btn_sign_in} onPress={() => this.didPressSubmit()}>
-    //                   <Text style={styles.regularText}>{'Đăng nhập'}</Text>
-    //                 </Button>
-    //               )
-    //             }
-    //             {
-    //               this.state.loading && (
-    //                 <ActivityIndicator size="large" color="#00A7DC" style={{ marginTop: 15 }} />
-    //               )
-    //             }
-
-    //           </View>
-    //           <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-    //             <TouchableOpacity testID="register_button" style={styles.btn_register} onPress={() => this.forgetPassword()}>
-    //               <Text style={{ color: 'black' }}>{'Quên mật khẩu?'}</Text>
-    //             </TouchableOpacity>
-    //             <TouchableOpacity testID="register_button" style={styles.btn_register} onPress={() => this.didPressRegister()}>
-    //               <Text style={{ color: '#4B8266' }}>{'Đăng ký'}</Text>
-    //             </TouchableOpacity>
-    //           </View>
-    //         </View>
-    //       </Content>
-    //     </Container>
-    // );
   }
 
   didPressRegister() {
@@ -280,10 +183,10 @@ export default class login extends Component {
   async didLogin(location) {
     this.setState({ loading: true })
     const data = {
-      device_id: getUniqueId(),
+      device_id: DeviceInfo.getUniqueId(),
       latitude: location.latitude,
       longitude: location.longitude,
-      push_token: getUniqueId(),
+      push_token: DeviceInfo.getUniqueId(),
       platform: "iOS"
     }
     axios({

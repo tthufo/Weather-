@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView, RefreshControl } from 'react-native';
 import { Container, Content, Button, Text } from 'native-base';
 import GetLocation from 'react-native-get-location'
 import STG from '../../service/storage';
@@ -11,33 +11,33 @@ import { Header } from '../elements';
 import IC from '../elements/icon';
 import NavigationService from '../../service/navigate';
 import Address from '../elements/Address';
-import _ from 'lodash';
+import _, { round } from 'lodash';
 import { getUniqueId } from 'react-native-device-info';
 
 const { width, height } = Dimensions.get('window');
 
-const CON = ({ image, title, value }) => {
+const CELL = ({ image, title, onPress }) => {
+  console.log(title)
   return (
-    <View style={{ alignItems: 'center', margin: 10 }}>
-      <Image
-        style={{ width: 45, height: 45, margin: 10 }}
-        source={image}
-      />
-      <Text style={{ fontSize: 35, color: 'white' }}>{value}</Text>
-      <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>{title}</Text>
-    </View>
-  );
-};
-
-const BUT = ({ image, title, onPress }) => {
-  return (
-    <TouchableOpacity style={{ flex: 1, }} onPress={onPress}>
-      <View style={{ flex: 1, backgroundColor: '#4B8266', flexDirection: 'row', alignItems: 'center', margin: 10, padding: 10, borderRadius: 8 }}>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={image}
-        />
-        <Text style={{ marginLeft: 8, flex: 1, fontSize: 16, color: 'white', flexWrap: 'wrap' }}>{title}</Text>
+    <TouchableOpacity style={{ flex: 1, marginRight: 15, marginLeft: 15, marginBottom: 10 }} onPress={onPress}>
+      <View style={{ paddingTop: 15, paddingBottom: 15, flex: 1, backgroundColor: '#4B8266', flexDirection: 'row', alignItems: 'center', borderRadius: 15, padding: 5 }}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ marginLeft: 8, flex: 1, fontSize: 18, color: 'white', flexWrap: 'wrap', fontWeight: 'bold', marginBottom: 5 }}>
+            {title.location_name && title.location_name.split('-')[0] || ''}
+          </Text>
+          <Text style={{ marginLeft: 8, flex: 1, fontSize: 17, color: 'white', flexWrap: 'wrap' }}>
+            {title.location_name && title.location_name.split('-')[1] || ''}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', minWidth: 80, alignItems: 'center' }}>
+          <Image
+            style={{ height: 35, width: 35 }}
+            source={require('../../assets/images/ic_humidity_one.png')}
+          />
+          <Text style={{ textAlign: 'center', fontSize: 20, color: 'white', flexWrap: 'wrap', fontWeight: 'bold' }}>
+            {title.weather && title.weather.air_temperature && round(title.weather.air_temperature)} °
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -50,6 +50,7 @@ export default class locationlist extends Component {
     this.state = {
       weather: [],
       loading: false,
+      isRefreshing: false,
     };
   }
 
@@ -58,30 +59,30 @@ export default class locationlist extends Component {
   }
 
   async getLocation() {
-    this.setState({ loading: true });
+    this.setState({ loading: true, isRefreshing: true });
     try {
       const weather = await API.home.getWeatherList({
-        device_id: getUniqueId(),
-        weather: null,
+        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        weather: true,
       });
-      this.setState({ loading: false });
+      this.setState({ loading: false, isRefreshing: false });
       if (weather.data.status != 200) {
         return
       }
       this.setState({ weather: weather.data.result });
     } catch (e) {
-      this.setState({ loading: false });
+      this.setState({ loading: false, isRefreshing: false });
       console.log(e)
     }
   }
 
   render() {
-    const { weather, loading } = this.state;
+    const { weather, loading, isRefreshing } = this.state;
     const { navigation } = this.props;
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <Header navigation={navigation} color={'transparent'} title='Quản lý địa điểm' />
-        <View style={{ flex: 1, width: '100%' }}>
+        <View style={{ width: '100%' }}>
           <TouchableOpacity onPress={() => {
             NavigationService.navigate('LocationScreen', {})
           }}>
@@ -102,31 +103,15 @@ export default class locationlist extends Component {
             showsVerticalScrollIndicator={false}
             data={weather}
             renderItem={({ item, index }) => (
-              <View style={{ flexDirection: 'row' }}>
-                <View
-                  style={{
-                    width: 80,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: 150,
-                  }}>
-                  <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{'33'}</Text>
-                  <Image
-                    style={{ height: 30, width: 30, marginTop: 20 }}
-                    source={require('../../assets/images/ic_humidity_one.png')}
-                  />
-
-                  <Image
-                    style={{ height: 20, width: 20 }}
-                    source={require('../../assets/images/ic_humidity_one.png')}
-                  />
-
-                  <Text style={{ fontWeight: 'bold', fontSize: 14 }}>%</Text>
-
-                </View>
-              </View>
+              <CELL title={item} onPress={() => console.log('sád')} />
             )}
             keyExtractor={(item, index) => index}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={() => this.getLocation()}
+              />
+            }
           />
         </View>
       </SafeAreaView>
