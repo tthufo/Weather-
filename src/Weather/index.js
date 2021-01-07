@@ -7,10 +7,7 @@ import API from '../apis';
 import HOST from '../apis/host';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
-import { Header } from '../elements';
 import IC from '../elements/icon';
-import NavigationService from '../../service/navigate';
-import Address from '../elements/Address';
 import _ from 'lodash';
 import Weather24 from '../Main_24H';
 
@@ -27,63 +24,49 @@ const CON = ({ image, title, value }) => {
   );
 };
 
-const BUT = ({ image, title, onPress }) => {
-  return (
-    <TouchableOpacity style={{ flex: 1, }} onPress={onPress}>
-      <View style={{ flex: 1, backgroundColor: '#4B8266', flexDirection: 'row', alignItems: 'center', margin: 10, padding: 10, borderRadius: 8 }}>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={image}
-        />
-        <Text style={{ marginLeft: 8, flex: 1, fontSize: 16, color: 'white', flexWrap: 'wrap' }}>{title}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 const SUMMARY = ({ image, title }) => {
   return (
-     <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 330, justifyContent: 'flex-start', alignItems: 'center' }}>
-        <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-        
-        
-        <View style={{ backgroundColor: 'green', width: '99%', height: 80, margin: 5 }}>
-          <Text>image</Text>
+    <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 330, justifyContent: 'flex-start', alignItems: 'center' }}>
+      <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+
+
+      <View style={{ backgroundColor: 'green', width: '99%', height: 80, margin: 5 }}>
+        <Text>image</Text>
+      </View>
+
+
+      <View style={{ width: '99%', justifyContent: 'space-between', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, marginTop: 10, marginBottom: 10 }}>
+        <View style={{}}>
+          <Text style={{ color: 'white', marginBottom: 5 }}>
+            {'Mặt trời mọc'}
+          </Text>
+          <Text style={{ color: 'white' }}>
+            {'11:11'}
+          </Text>
         </View>
+        <View style={{}}>
+          <Text style={{ color: 'white', marginBottom: 5 }}>
+            {'Mặt trời lặn'}
+          </Text>
+          <Text style={{ color: 'white' }}>
+            {'11:00'}
+          </Text>
+        </View>
+      </View>
 
-
-        <View style={{ width: '99%', justifyContent: 'space-between', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, marginTop: 10, marginBottom: 10 }}>
-          <View style={{  }}>
-            <Text style={{ color: 'white', marginBottom: 5 }}>
-              {'Mặt trời mọc'}
+      <View style={{ width: '99%', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, flexWrap: 'wrap' }}>
+        {['', '', '', '', '', ''].map(item =>
+          <View style={{ width: '50%', marginBottom: 12 }}>
+            <Text style={{ color: '#A0B7DB', marginBottom: 5, fontSize: 16 }}>
+              {'GIÓ'}
             </Text>
-            <Text style={{ color: 'white' }}>
-              {'11:11'}
-            </Text>
-          </View>
-          <View style={{  }}>
-            <Text style={{ color: 'white', marginBottom: 5 }}>
-              {'Mặt trời lặn'}
-            </Text>
-            <Text style={{ color: 'white' }}>
+            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
               {'11:00'}
             </Text>
           </View>
-        </View>
-
-        <View style={{ width: '99%', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, flexWrap: 'wrap' }}>
-            {['', '', '', '', '', ''].map(item => 
-                  <View style={{ width: '50%', marginBottom: 12 }}>
-                    <Text style={{ color: '#A0B7DB', marginBottom: 5, fontSize: 16 }}>
-                      {'GIÓ'}
-                    </Text>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
-                      {'11:00'}
-                    </Text>
-                  </View>
-            )}
-        </View>
+        )}
       </View>
+    </View>
   );
 };
 
@@ -110,14 +93,13 @@ export default class weather extends React.PureComponent {
 
   }
 
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     return nextState != this.props;
   }
 
   render() {
     const { crops, selectedCrop, weather, loading } = this.state;
-    const { latitude, longitude } = this.props;
-    // console.log('====>rendering')
+    const { latitude, longitude, location_name } = this.props;
     const resultGmos = weather.resultGmos && weather.resultGmos[0]
     var d = new Date();
     var h = d.getHours();
@@ -152,7 +134,7 @@ export default class weather extends React.PureComponent {
             <Text style={{ fontSize: 17, color: 'white' }}>{resultGmos && ICON[Math.round(resultGmos.weather) - 1].name || '--'}</Text>
           </View>
 
-          <Weather24 latLong={{ lat: latitude, lng: longitude }} />
+          <Weather24 locationName={location_name} latLong={{ lat: latitude, lng: longitude }} />
 
           <TouchableOpacity>
             <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 50, justifyContent: 'center', alignItems: 'center' }}>
@@ -162,7 +144,7 @@ export default class weather extends React.PureComponent {
               </Text>
             </View>
           </TouchableOpacity>
-          
+
           <SUMMARY />
 
         </Content>

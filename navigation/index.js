@@ -26,6 +26,7 @@ import ForecastScreen from '../src/Forecast';
 import MainScreen from '../src/Main';
 import LocationListScreen from '../src/LocationList';
 import LocationScreen from '../src/Location';
+import Main24DetailScreen from '../src/Main_24H_Detail';
 
 const AppNavigator = createStackNavigator({
   Root: { screen: RootScreen },
@@ -61,6 +62,7 @@ const AppNavigator = createStackNavigator({
   },
   LocationListScreen: { screen: LocationListScreen },
   LocationScreen: { screen: LocationScreen },
+  Main24DetailScreen: { screen: Main24DetailScreen },
 }, {
   headerMode: 'none',
 });

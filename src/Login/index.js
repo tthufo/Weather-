@@ -80,6 +80,8 @@ export default class login extends Component {
     // })
     this.getInfo()
     this.preLogin()
+    STG.saveData("temperature", { temp: '1' });
+    STG.saveData("wind", { wind: '1' });
     // this.didLogin()
   }
 

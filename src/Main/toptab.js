@@ -80,7 +80,7 @@ export default class mytabs extends Component {
             }
           }}
         >
-          {locationList.map((item, index) => {
+          {locationList.map((item) => {
             return (
               <Tab.Screen
                 name={String(item.location_id)}
