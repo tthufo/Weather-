@@ -38,7 +38,9 @@ export default class mytabs extends Component {
 
   constructor(props) {
     super(props);
-
+    this.state = {
+      locationList: props.locationList,
+    }
     this.didChangeTab = this.didChangeTab.bind(this);
     this.navigation = null;
   }
@@ -55,6 +57,7 @@ export default class mytabs extends Component {
 
   render() {
     const { tabChange } = this.props;
+    const { locationList } = this.state;
     return (
       <NavigationContainer>
         <Tab.Navigator
@@ -77,11 +80,11 @@ export default class mytabs extends Component {
             }
           }}
         >
-          {['1', '2', '3', '4', '5', '6', '7'].map(item => {
+          {locationList.map((item, index) => {
             return (
               <Tab.Screen
-                name={item}
-                component={Weather}
+                name={String(item.location_id)}
+                component={() => <Weather {...item} />}
               />
             );
           })}

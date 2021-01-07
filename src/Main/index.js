@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView } from 'react-native';
-import { Container, Content, Button, Text } from 'native-base';
+import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView, Text } from 'react-native';
+import { Container, Content, Button } from 'native-base';
 import GetLocation from 'react-native-get-location'
 import STG from '../../service/storage';
 import API from '../apis';
 import HOST from '../apis/host';
-import axios from 'axios';
+import axios, { CancelToken } from 'axios';
 import Toast from 'react-native-simple-toast';
 import { Header } from '../elements';
 import IC from '../elements/icon';
@@ -15,6 +15,12 @@ import _ from 'lodash';
 import TopTab from './toptab';
 import MarqueeLabel from 'react-native-lahk-marquee-label';
 import DeviceInfo from 'react-native-device-info';
+import Heading from './header';
+import BackGround from './background';
+
+const REVRSE_GEO_CODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
+
+const API_KEY = 'AIzaSyBXBWoCCozdvmjRABdP_VfDiPAsSU1WS2Q';
 
 const { width, height } = Dimensions.get('window');
 
@@ -49,15 +55,17 @@ const COLOR = ["#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB", "#DFEEB6", "#E9DEB3",
 
 const DEFAULT = { location_id: -1, location_name: 'Hanoi - Vietnam', latitude: 21.028511, longitude: 105.804817, device_id: DeviceInfo.getUniqueId() }
 
-export default class main extends Component {
+export default class main extends React.PureComponent {
 
   constructor(props) {
     super(props);
     this.state = {
       isConnected: true,
-      weather: {},
+      locationList: [],
       loading: true,
       page: 0,
+      currentLocation: {},
+      locationName: 'WeatherPlus'
     };
 
     this.currentPage = 0;
@@ -65,24 +73,26 @@ export default class main extends Component {
   }
 
   componentDidMount() {
-    this.getLocation()
+    this.getCurrentLocation()
   }
 
-  getLocation() {
+  getCurrentLocation() {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
     })
       .then(location => {
-        // this.getWeather(location);
+        this.fetchAddressForLocation(location)
       })
       .catch(error => {
         const { code, message } = error;
         console.warn(code, message);
+        this.getLocation()
       })
   }
 
   async getLocation() {
+    const { currentLocation } = this.state;
     this.setState({ loading: true });
     try {
       const weather = await API.home.getWeatherList({
@@ -93,26 +103,55 @@ export default class main extends Component {
       if (weather.data.status != 200) {
         return
       }
-      console.log('===>', weather)
-      this.setState({ weather: weather.data.result });
+      this.setState({ locationList: [Object.keys(currentLocation).length == 0 ? DEFAULT : currentLocation, ...weather.data.result] }, () => {
+        // console.log(this.state.locationList)
+        this.setState({ locationName: this.state.locationList[0].location_name })
+      });
     } catch (e) {
       this.setState({ loading: false, isRefreshing: false });
       console.log(e)
     }
   }
 
+  fetchAddressForLocation = location => {
+    this.setState({ loading: true });
+    let { latitude, longitude } = location;
+    this.source = CancelToken.source();
+    axios
+      .get(`${REVRSE_GEO_CODE_URL}?key=${API_KEY}&latlng=${latitude},${longitude}`, {
+        cancelToken: this.source.token,
+      })
+      .then(({ data }) => {
+        this.setState({ loading: false });
+        let { results } = data;
+        if (results.length > 0) {
+          let { formatted_address } = results[0];
+          let address = formatted_address.split(',')
+          let currentAddress = address.length >= 2 ? `${address[0]} - ${address[1]}` : `${address[0]}`
+          if (this._header) {
+            this._header.didChangeText(currentAddress)
+          }
+          if (this._background) {
+            this._background.didChangeImage('bg_06')
+          }
+          this.setState({ currentLocation: {location_id: -1, location_name: currentAddress, latitude, longitude, device_id: DeviceInfo.getUniqueId()} }, () => this.getLocation())
+        }
+      });
+  }
+
   render() {
-    const { weather, loading, page } = this.state;
-    const resultGmos = weather.resultGmos && weather.resultGmos[0]
-    var d = new Date();
-    var h = d.getHours();
-    const ICON = h <= 19 && h >= 7 ? IC.DAY : IC.NIGHT
+    const { locationList, loading, page, locationName } = this.state;
+    // const resultGmos = weather.resultGmos && weather.resultGmos[0]
+    // var d = new Date();
+    // var h = d.getHours();
+    // const ICON = h <= 19 && h >= 7 ? IC.DAY : IC.NIGHT
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <Image
+        {/* <Image
           style={{ width: width, height: height, resizeMode: 'cover', position: 'absolute', top: 0, left: 0 }}
           source={page == 0 ? require('../../assets/images/bg_06.png') : require('../../assets/images/bg_03.png')}
-        />
+        /> */}
+        <BackGround onRef={component => this._background = component} />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
           <TouchableOpacity onPress={() => NavigationService.navigate('LocationListScreen', {})}>
             <Image
@@ -121,9 +160,7 @@ export default class main extends Component {
             />
           </TouchableOpacity>
           <View style={{ justifyContent: 'center' }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'white', textAlign: 'center' }}>
-              HaNoi
-            </Text>
+            <Heading onRef={component => this._header = component} />
           </View>
           <TouchableOpacity>
             <Image
@@ -132,18 +169,16 @@ export default class main extends Component {
             />
           </TouchableOpacity>
         </View>
+        {locationList.length != 0 &&
         <TopTab
+          locationList={locationList}
           tabChange={(e) => {
-            if (e != page) {
-              this.setState({ page: e })
-            }
+            this._header.didChangeText(locationList[e].location_name)
+            this._background.didChangeImage(e)
           }}
           navi={(navigation) => this.navigation = navigation}
           onRef={(ref) => this.navigation = ref}
-        />
-        {/* <Button onPress={() => this.navigation.didChangeTab('5')} >
-          <Text>sdfds</Text>
-        </Button> */}
+        />}
       </SafeAreaView>
     );
   }

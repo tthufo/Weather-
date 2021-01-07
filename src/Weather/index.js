@@ -41,18 +41,60 @@ const BUT = ({ image, title, onPress }) => {
   );
 };
 
+const SUMMARY = ({ image, title }) => {
+  return (
+     <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 330, justifyContent: 'flex-start', alignItems: 'center' }}>
+        <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+        
+        
+        <View style={{ backgroundColor: 'green', width: '99%', height: 80, margin: 5 }}>
+          <Text>image</Text>
+        </View>
+
+
+        <View style={{ width: '99%', justifyContent: 'space-between', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, marginTop: 10, marginBottom: 10 }}>
+          <View style={{  }}>
+            <Text style={{ color: 'white', marginBottom: 5 }}>
+              {'Mặt trời mọc'}
+            </Text>
+            <Text style={{ color: 'white' }}>
+              {'11:11'}
+            </Text>
+          </View>
+          <View style={{  }}>
+            <Text style={{ color: 'white', marginBottom: 5 }}>
+              {'Mặt trời lặn'}
+            </Text>
+            <Text style={{ color: 'white' }}>
+              {'11:00'}
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ width: '99%', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, flexWrap: 'wrap' }}>
+            {['', '', '', '', '', ''].map(item => 
+                  <View style={{ width: '50%', marginBottom: 12 }}>
+                    <Text style={{ color: '#A0B7DB', marginBottom: 5, fontSize: 16 }}>
+                      {'GIÓ'}
+                    </Text>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
+                      {'11:00'}
+                    </Text>
+                  </View>
+            )}
+        </View>
+      </View>
+  );
+};
+
+
 const COLOR = ["#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB", "#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB"]
 
-export default class main extends Component {
+export default class weather extends React.PureComponent {
 
   constructor(props) {
     super(props);
     this.state = {
-      login_info: {
-        email: false,
-        password: false
-      },
-      show_validation: false,
       modalVisible: false,
       token: null,
       isConnected: true,
@@ -65,99 +107,17 @@ export default class main extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      // this.getLocation();
-    }, 500)
-    STG.getData('user').then(u => {
-      // this.getCrops(u.subscribe);
-    })
+
   }
 
-  getLocation() {
-    GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 15000,
-    })
-      .then(location => {
-        this.getWeather(location);
-      })
-      .catch(error => {
-        const { code, message } = error;
-        console.warn(code, message);
-      })
-  }
-
-  async getWeather(location) {
-    this.setState({ loading: true });
-    this.setState({ latLong: { lat: location.latitude, long: location.longitude } })
-    try {
-      const show = STG.getData('auto')
-      const weather = await API.home.getWeather({
-        latitude: show ? 21.028511 : location.latitude,
-        longtitude: show ? 105.804817 : location.longitude,
-        type: 1,
-      });
-      this.setState({ loading: false });
-      if (weather.data.statusCode != 200) {
-        return
-      }
-      this.setState({ weather: weather.data.data });
-    } catch (e) {
-      this.setState({ loading: false });
-      console.log(e)
-    }
-  }
-
-  async getCrops(subscriber) {
-    var bodyFormData = new FormData();
-    const show = await STG.getData('auto')
-    const userInfo = await STG.getData('token')
-    bodyFormData.append('subscriber', subscriber);
-    axios({
-      method: 'post',
-      url: HOST.BASE_URL + '/appcontent/cropsUser/list-crops-user',
-      data: bodyFormData,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Authorization': 'bearer ' + userInfo.access_token,
-      }
-    }).then(r => {
-      if (r.status != 200) {
-        Toast.show('Lỗi xảy ra, mời bạn thử lại')
-        return;
-      }
-      const resign = r.data.data.filter(e => show ? (e.cropsUserId != null && e.cropsId != 27 && e.cropsId != 28) : e.cropsUserId != null).map((e, index) => {
-        e.check = index == 0 ? true : false;
-        return e;
-      });
-      this.setState({
-        crops: resign.filter(e => e.cropsUserId != null),
-      })
-    }).catch(e => {
-      Toast.show('Lỗi xảy ra, mời bạn thử lại')
-      console.log(e)
-    })
-  }
-
-  handleChange = (index) => {
-    var newData = [...this.state.crops];
-    newData.map(e => {
-      e.check = false
-    })
-    newData[index].check = true;
-    this.setState({ crops: newData, selectedCrop: index });
-  };
-
-  reload() {
-    STG.getData('user').then(u => {
-      this.setState({ selectedCrop: 0 }, () => {
-        this.getCrops(u.subscribe);
-      })
-    })
+  shouldComponentUpdate(nextProps, nextState){
+    return nextState != this.props;
   }
 
   render() {
-    const { crops, selectedCrop, weather, loading, latLong } = this.state;
+    const { crops, selectedCrop, weather, loading } = this.state;
+    const { latitude, longitude } = this.props;
+    // console.log('====>rendering')
     const resultGmos = weather.resultGmos && weather.resultGmos[0]
     var d = new Date();
     var h = d.getHours();
@@ -191,7 +151,8 @@ export default class main extends Component {
             <Text style={{ fontSize: 17, color: 'white' }}>{`Nhiệt độ cảm nhận ${resultGmos && Math.round(resultGmos.temperatureFeel).toString() || '--'}°C`} </Text>
             <Text style={{ fontSize: 17, color: 'white' }}>{resultGmos && ICON[Math.round(resultGmos.weather) - 1].name || '--'}</Text>
           </View>
-          <Weather24 latLong={{ lat: 21.028511, lng: 105.804817 }} />
+
+          <Weather24 latLong={{ lat: latitude, lng: longitude }} />
 
           <TouchableOpacity>
             <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 50, justifyContent: 'center', alignItems: 'center' }}>
@@ -201,6 +162,8 @@ export default class main extends Component {
               </Text>
             </View>
           </TouchableOpacity>
+          
+          <SUMMARY />
 
         </Content>
       </Container>
