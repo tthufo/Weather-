@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, RefreshControl, ActivityIndicator } from 'react-native';
-import { Container, Content, Button, Text } from 'native-base';
-import GetLocation from 'react-native-get-location'
-import STG from '../../service/storage';
-import API from '../apis';
-import HOST from '../apis/host';
-import axios from 'axios';
-import Toast from 'react-native-simple-toast';
+import { Container, Content, Text } from 'native-base';
+import NavigationService from '../../service/navigate';
 import IC from '../elements/icon';
 import _ from 'lodash';
 import Weather24 from '../Main_24H';
@@ -136,7 +131,9 @@ export default class weather extends React.PureComponent {
 
           <Weather24 locationName={location_name} latLong={{ lat: latitude, lng: longitude }} />
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+            NavigationService.navigate('Main14DayScreen', { locationName: location_name, latLong: { lat: latitude, lng: longitude } })
+          }}>
             <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 50, justifyContent: 'center', alignItems: 'center' }}>
               <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: 50, position: 'absolute', top: 0, left: 0 }} />
               <Text style={{ width: '100%', textAlign: 'center', color: 'white' }}>

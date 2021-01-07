@@ -10,7 +10,6 @@ import Toast from 'react-native-simple-toast';
 import { Header } from '../elements';
 import IC from '../elements/icon';
 import NavigationService from '../../service/navigate';
-import Address from '../elements/Address';
 import _ from 'lodash';
 import TopTab from './toptab';
 import MarqueeLabel from 'react-native-lahk-marquee-label';
@@ -134,7 +133,7 @@ export default class main extends React.PureComponent {
           if (this._background) {
             this._background.didChangeImage('bg_06')
           }
-          this.setState({ currentLocation: {location_id: -1, location_name: currentAddress, latitude, longitude, device_id: DeviceInfo.getUniqueId()} }, () => this.getLocation())
+          this.setState({ currentLocation: { location_id: -1, location_name: currentAddress, latitude, longitude, device_id: DeviceInfo.getUniqueId() } }, () => this.getLocation())
         }
       });
   }
@@ -170,15 +169,15 @@ export default class main extends React.PureComponent {
           </TouchableOpacity>
         </View>
         {locationList.length != 0 &&
-        <TopTab
-          locationList={locationList}
-          tabChange={(e) => {
-            this._header.didChangeText(locationList[e].location_name)
-            this._background.didChangeImage(e)
-          }}
-          navi={(navigation) => this.navigation = navigation}
-          onRef={(ref) => this.navigation = ref}
-        />}
+          <TopTab
+            locationList={locationList}
+            tabChange={(e) => {
+              this._header.didChangeText(locationList[e].location_name)
+              this._background.didChangeImage(e)
+            }}
+            navi={(navigation) => this.navigation = navigation}
+            onRef={(ref) => this.navigation = ref}
+          />}
       </SafeAreaView>
     );
   }

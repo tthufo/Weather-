@@ -36,14 +36,13 @@ export const windUnit = async () => {
   }
 
   if (w && w.wind && w.wind == '2') {
-    return 'hm/h'
+    return 'km/h'
   }
 
   return 'm/s'
 }
 
 export const weatherImage = (image) => {
-  console.log(image)
   let images = [
     require('../../assets/images/ico_01.png'),
     require('../../assets/images/ico_02.png'),

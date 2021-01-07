@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, ActivityIndicator } from 'react-native';
 import { Text } from 'native-base';
-import STG from '../../service/storage';
 import API from '../apis';
 import _ from 'lodash';
 import NavigationService from '../../service/navigate';
@@ -53,7 +52,6 @@ export default class weather24 extends Component {
 
   async getWeather(location) {
     this.setState({ loading: true });
-    this.setState({ latLong: { lat: location.latitude, long: location.longitude } })
     try {
       const weather = await API.home.getWeather24({
         latitude: location.lat,
@@ -75,7 +73,9 @@ export default class weather24 extends Component {
           e['day'] = day.split('/')[0] + '/' + day.split('/')[1]
         })()
       })
-      this.setState({ weather: weather.data.result });
+      setTimeout(() => {
+        this.setState({ weather: weather.data.result });
+      }, 500)
     } catch (e) {
       this.setState({ loading: false });
       console.log(e)
