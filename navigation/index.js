@@ -24,6 +24,7 @@ import ForecastScreen from '../src/Forecast';
 
 
 import MainScreen from '../src/Main';
+import MainScreenEdit from '../src/Main/mainEdit';
 import LocationListScreen from '../src/LocationList';
 import LocationScreen from '../src/Location';
 import Main24DetailScreen from '../src/Main_24H_Detail';
@@ -56,6 +57,11 @@ const AppNavigator = createStackNavigator({
   Answer: { screen: AnswerScreen },
   Update: { screen: UpdateScreen },
   Forecast: { screen: ForecastScreen },
+  MainScreenEdit: {
+    screen: MainScreenEdit, navigationOptions: {
+      gesturesEnabled: true,
+    }
+  },
   MainScreen: {
     screen: MainScreen, navigationOptions: {
       gesturesEnabled: false,

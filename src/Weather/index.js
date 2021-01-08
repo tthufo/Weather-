@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, RefreshControl, ActivityIndicator } from 'react-native';
 import { Container, Content, Text } from 'native-base';
 import NavigationService from '../../service/navigate';
+import { temperature, tempUnit } from '../Utils/helper';
 import IC from '../elements/icon';
+import API from '../apis';
 import _ from 'lodash';
+import Header from './header';
 import Weather24 from '../Main_24H';
 
 const CON = ({ image, title, value }) => {
@@ -80,22 +83,53 @@ export default class weather extends React.PureComponent {
       selectedCrop: 0,
       weather: {},
       loading: true,
-      latLong: null,
     };
   }
 
   componentDidMount() {
-
+    const { latitude, longitude } = this.props;
+    this.getWeather({ lat: latitude, lng: longitude });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState != this.props;
+  async getWeather(location) {
+    this.setState({ loading: true });
+    try {
+      const weather = await API.home.getWeather24({
+        latitude: location.lat,
+        longitude: location.lng,
+        type: 1,
+      });
+      this.setState({ loading: false });
+      if (weather.data.status != 200) {
+        return
+      }
+      weather.data.result.map(e => {
+        (async () => {
+          e['temperature'] = await temperature(e.air_temperature)
+          e['temperature_feeling'] = await temperature(e.temperature_feel)
+          e['temp_unit'] = await tempUnit()
+        })()
+      })
+      setTimeout(() => {
+        this.setState({ weather: weather.data.result[0] }, () => {
+          if (this._header) {
+            this._header.didChangeData(this.state.weather)
+          }
+          if (this._weather) {
+            this._weather.didReload()
+          }
+        });
+      }, 500)
+    } catch (e) {
+      this.setState({ loading: false });
+      console.log(e)
+    }
   }
 
   render() {
-    const { crops, selectedCrop, weather, loading } = this.state;
+    const { weather, loading } = this.state;
     const { latitude, longitude, location_name } = this.props;
-    const resultGmos = weather.resultGmos && weather.resultGmos[0]
+    const ready = Object.keys(weather).length != 0
     var d = new Date();
     var h = d.getHours();
     const ICON = h <= 19 && h >= 7 ? IC.DAY : IC.NIGHT
@@ -105,31 +139,22 @@ export default class weather extends React.PureComponent {
           style={{ backgroundColor: 'transparent' }}
           refreshControl={
             <RefreshControl
-              refreshing={false}
-              // onRefresh={}
+              refreshing={loading}
+              onRefresh={() => this.getWeather({ lat: latitude, lng: longitude })}
               tintColor="white"
             />}
         >
-          <View style={{ backgroundColor: 'transparent', flex: 1, padding: 10, flexDirection: 'row', justifyContent: 'center' }}>
-            {loading ? <ActivityIndicator size="large" color="white" />
-              :
-              <TouchableOpacity onPress={() => {
-                this.getLocation();
-              }}>
-                <Image
-                  style={{ width: 70, height: 70, marginRight: 5 }}
-                  source={resultGmos && ICON[Math.round(resultGmos.weather) - 1].icon || ''}
-                />
-              </TouchableOpacity>}
-            <Text style={{ fontSize: 60, color: 'white' }}>{resultGmos && Math.round(resultGmos.air_temperature) || '--'}</Text>
-            <Text style={{ fontSize: 30, color: 'white' }}>°C</Text>
+          {/* <View style={{ backgroundColor: 'transparent', flex: 1, padding: 5, flexDirection: 'row', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 60, color: 'white' }}>{ready && weather.temperature || '-'}</Text>
+            <Text style={{ fontSize: 30, color: 'white' }}>{ready && weather.temp_unit}</Text>
           </View>
           <View style={{ backgroundColor: 'transparent', flex: 1, padding: 10, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 17, color: 'white' }}>{`Nhiệt độ cảm nhận ${resultGmos && Math.round(resultGmos.temperatureFeel).toString() || '--'}°C`} </Text>
-            <Text style={{ fontSize: 17, color: 'white' }}>{resultGmos && ICON[Math.round(resultGmos.weather) - 1].name || '--'}</Text>
-          </View>
+            <Text style={{ fontSize: 17, color: 'white', fontWeight: 'bold', marginBottom: 10 }}>{ready && ICON[Math.round(weather.weather) - 1].name || '-'}</Text>
+            <Text style={{ fontSize: 16, color: 'white' }}>{`Cảm nhận ${ready && weather.temperature_feeling || '-'}${ready && weather.temp_unit || ''}`} </Text>
+          </View> */}
+          {ready && <Header onRef={component => this._header = component} />}
 
-          <Weather24 locationName={location_name} latLong={{ lat: latitude, lng: longitude }} />
+          <Weather24 onRef={component => this._weather = component} locationName={location_name} latLong={{ lat: latitude, lng: longitude }} />
 
           <TouchableOpacity onPress={() => {
             NavigationService.navigate('Main14DayScreen', { locationName: location_name, latLong: { lat: latitude, lng: longitude } })

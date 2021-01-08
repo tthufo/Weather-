@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Dimensions, SafeAreaView, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView, Text } from 'react-native';
+import { Container, Content, Button } from 'native-base';
 import GetLocation from 'react-native-get-location'
 import STG from '../../service/storage';
 import API from '../apis';
@@ -68,7 +69,6 @@ export default class main extends React.PureComponent {
 
     this.currentPage = 0;
     this.navigation = null;
-    this.onReloadData = this.onReloadData.bind(this)
   }
 
   params() {
@@ -78,14 +78,13 @@ export default class main extends React.PureComponent {
 
   componentDidMount() {
     if (this.params().add == true) {
-
+      const { locationName, latitude, longitude } = this.params();
+      this.setState({ currentLocation: { location_id: -1, location_name: locationName, latitude, longitude, device_id: DeviceInfo.getUniqueId() } }, () => {
+        this.setState({ locationList: [this.state.currentLocation] })
+      })
     } else {
       this.getCurrentLocation()
     }
-  }
-
-  onReloadData() {
-    this.getCurrentLocation()
   }
 
   getCurrentLocation() {
@@ -117,7 +116,6 @@ export default class main extends React.PureComponent {
       }
       this.setState({ locationList: [Object.keys(currentLocation).length == 0 ? DEFAULT : currentLocation, ...weather.data.result] }, () => {
         this.setState({ locationName: this.state.locationList[0].location_name })
-        this.navigation.didChangeList(this.state.locationList)
       });
     } catch (e) {
       this.setState({ loading: false, isRefreshing: false });
@@ -151,6 +149,31 @@ export default class main extends React.PureComponent {
       });
   }
 
+  async addLocation() {
+    const { navigation: { state: { params: { onReload } } } } = this.props;
+    const { currentLocation } = this.state;
+    this.setState({ loading: true });
+    try {
+      const weather = await API.home.addWeather({
+        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+        location_name: currentLocation.location_name,
+      });
+      this.setState({ loading: false });
+      if (weather.data.status != 200) {
+        return
+      }
+      this.props.navigation.pop(2);
+      if (onReload) {
+        onReload()
+      }
+    } catch (e) {
+      this.setState({ loading: false });
+      console.log(e)
+    }
+  }
+
   render() {
     const { locationList } = this.state;
     return (
@@ -161,12 +184,12 @@ export default class main extends React.PureComponent {
             if (this.params().add == true) {
               this.props.navigation.pop();
             } else {
-              NavigationService.navigate('LocationListScreen', { onReload: () => this.onReloadData() });
+              NavigationService.navigate('LocationListScreen', {});
             }
           }}>
             <Image
               style={{ width: 40, height: 40 }}
-              source={this.params().add == true ? require('../../assets/images/back_color.png') : require('../../assets/images/ico_place.png')}
+              source={this.params().add == true ? require('../../assets/images/arrow_left_white.png') : require('../../assets/images/ico_place.png')}
             />
           </TouchableOpacity>
           <View style={{ justifyContent: 'center' }}>
@@ -174,7 +197,7 @@ export default class main extends React.PureComponent {
           </View>
           <TouchableOpacity onPress={() => {
             if (this.params().add == true) {
-              this.props.navigation.pop();
+              this.addLocation()
             } else {
               // NavigationService.navigate('LocationListScreen', {}); 
             }

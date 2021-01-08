@@ -6,35 +6,6 @@ import _ from 'lodash';
 import NavigationService from '../../service/navigate';
 import { temperature, weatherImage, wind, windUnit } from '../Utils/helper';
 
-const { width, height } = Dimensions.get('window');
-
-const CON = ({ image, title, value }) => {
-  return (
-    <View style={{ alignItems: 'center', margin: 10 }}>
-      <Image
-        style={{ width: 45, height: 45, margin: 10 }}
-        source={image}
-      />
-      <Text style={{ fontSize: 35, color: 'white' }}>{value}</Text>
-      <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>{title}</Text>
-    </View>
-  );
-};
-
-const BUT = ({ image, title, onPress }) => {
-  return (
-    <TouchableOpacity style={{ flex: 1, }} onPress={onPress}>
-      <View style={{ flex: 1, backgroundColor: '#4B8266', flexDirection: 'row', alignItems: 'center', margin: 10, padding: 10, borderRadius: 8 }}>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={image}
-        />
-        <Text style={{ marginLeft: 8, flex: 1, fontSize: 16, color: 'white', flexWrap: 'wrap' }}>{title}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 export default class weather24 extends Component {
 
   constructor(props) {
@@ -43,9 +14,18 @@ export default class weather24 extends Component {
       weather: [],
       loading: false,
     };
+
+    this.didReload = this.didReload.bind(this);
   }
 
   componentDidMount() {
+    this.didReload()
+    if (this.props.onRef != null) {
+      this.props.onRef(this, this.didReload);
+    }
+  }
+
+  didReload() {
     const { latLong } = this.props;
     this.getWeather(latLong)
   }
@@ -74,7 +54,7 @@ export default class weather24 extends Component {
         })()
       })
       setTimeout(() => {
-        this.setState({ weather: weather.data.result });
+        this.setState({ weather: weather.data.result.reverse() });
       }, 500)
     } catch (e) {
       this.setState({ loading: false });
@@ -103,7 +83,7 @@ export default class weather24 extends Component {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               horizontal={true}
-              data={weather.reverse()}
+              data={weather}
               renderItem={({ item, index }) => (
                 <View style={{ flexDirection: 'row' }}>
                   <View

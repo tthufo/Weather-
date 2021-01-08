@@ -59,7 +59,7 @@ export default class AutoCompleteInput extends React.Component {
         if (results.length > 0) {
           let { formatted_address } = results[0];
           let address = formatted_address.split(',')
-          this.props.getAddress(address.length >= 2 ? `${address[0]} - ${address[1]}` : `${address[0]}`)
+          this.props.getAddress(address.length >= 2 ? `${address[0]} - ${address[1]}` : `${address[0]}`, location)
           // this.setState({ text: formatted_address });
         }
       });

@@ -42,6 +42,20 @@ export const windUnit = async () => {
   return 'm/s'
 }
 
+export const tempUnit = async () => {
+  let w = await STG.getData('temperature')
+
+  if (w && w.temp && w.temp == '1') {
+    return '°C'
+  }
+
+  if (w && w.temp && w.temp == '2') {
+    return '°F'
+  }
+
+  return '°C'
+}
+
 export const formatUv = (uv) => {
   if (uv == null) return "-";
   else if (uv >= 0 && uv <= 2) return "Thấp";

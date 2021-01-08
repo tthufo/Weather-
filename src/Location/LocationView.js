@@ -13,7 +13,7 @@ import GetLocation from 'react-native-get-location'
 import AutoCompleteInput from './AutoCompleteInput';
 import { Container } from 'native-base';
 import { Header } from '../elements';
-
+import NavigationService from '../../service/navigate';
 
 const PLACE_DETAIL_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
 const DEFAULT_DELTA = { latitudeDelta: 0.015, longitudeDelta: 0.0121 };
@@ -72,6 +72,7 @@ export default class LocationView extends React.Component {
     inputScale: new Animated.Value(1),
     inFocus: false,
     address: '',
+    location: {},
     region: {
       ...DEFAULT_DELTA,
       ...this.props.initialLocation,
@@ -108,7 +109,7 @@ export default class LocationView extends React.Component {
 
   _setRegion = (region, animate = true) => {
     this.state.region = { ...this.state.region, ...region };
-    if (animate) this._map.animateToRegion(this.state.region);
+    // if (animate) this._map.animateToRegion(this.state.region);
   };
 
   _onPlaceSelected = placeId => {
@@ -121,7 +122,7 @@ export default class LocationView extends React.Component {
   };
 
   _getCurrentLocation = () => {
-    const { timeout, maximumAge, enableHighAccuracy } = this.props;
+    // const { timeout, maximumAge, enableHighAccuracy } = this.props;
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
@@ -137,8 +138,8 @@ export default class LocationView extends React.Component {
   };
 
   render() {
-    let { inputScale, address } = this.state;
-    const { navigation } = this.props;
+    let { inputScale, address, location } = this.state;
+    const { navigation, onReload } = this.props;
     return (
       <Container style={{ backgroundColor: 'transparent' }}>
         <Header navigation={navigation} color={'transparent'} title={'Địa điểm yêu thích'} />
@@ -166,7 +167,7 @@ export default class LocationView extends React.Component {
               style={[styles.input, { transform: [{ scale: inputScale }] }]}
               debounceDuration={this.props.debounceDuration}
               components={this.props.components}
-              getAddress={address => this.setState({ address })}
+              getAddress={(address, location) => this.setState({ address, location })}
             />
           </View>
           <TouchableOpacity
@@ -182,7 +183,9 @@ export default class LocationView extends React.Component {
               {address}
             </Text>
             <TouchableOpacity
-              onPress={() => console.log(this.state.region)}
+              onPress={() => {
+                this.props.navigation.navigate('MainScreenEdit', { locationName: address, add: true, latitude: location.latitude, longitude: location.longitude, onReload })
+              }}
             >
               <Image
                 style={{ width: 50, height: 50, opacity: 1 }}

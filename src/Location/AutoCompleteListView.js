@@ -52,7 +52,7 @@ export default class AutoCompleteListView extends React.Component {
       <TouchableControl onPress={() => {
         Events.trigger('PlaceSelected', item.place_id);
         updateAddress(structured_formatting.main_text)
-        }}>
+      }}>
         <View style={styles.row}>
           <Text style={styles.primaryText} numberOfLines={1}>
             {structured_formatting.main_text}
@@ -85,8 +85,8 @@ export default class AutoCompleteListView extends React.Component {
     return Platform.OS === 'android' ? (
       this._getFlatList()
     ) : (
-      <View style={styles.listContainer}>{this._getFlatList()}</View>
-    );
+        <View style={styles.listContainer}>{this._getFlatList()}</View>
+      );
   }
 }
 

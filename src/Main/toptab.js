@@ -24,9 +24,7 @@ const TabBar = ({ props, getPos, navi }) => {
       }}>
         {navigationState.routes.map((route, index) => {
           return (
-            <View style={{ margin: 5, borderRadius: 5, backgroundColor: navigationState.index == index ? 'black' : 'white', width: 10, height: 10 }}>
-
-            </View>
+            <View style={{ margin: 5, borderColor: 'white', borderWidth: navigationState.index == index ? 1 : 0, borderRadius: 4, backgroundColor: navigationState.index == index ? 'transparent' : 'white', width: 8, height: 8 }} />
           )
         })}
       </View>
@@ -42,6 +40,7 @@ export default class mytabs extends Component {
       locationList: props.locationList,
     }
     this.didChangeTab = this.didChangeTab.bind(this);
+    this.didChangeList = this.didChangeList.bind(this);
     this.navigation = null;
   }
 
@@ -49,6 +48,10 @@ export default class mytabs extends Component {
     if (this.props.onRef != null) {
       this.props.onRef(this, this.didChangeTab);
     }
+  }
+
+  didChangeList(locationList) {
+    this.setState({ locationList })
   }
 
   didChangeTab(tab) {

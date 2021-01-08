@@ -14,8 +14,6 @@ import Address from '../elements/Address';
 import LocationView from './LocationView'
 import _ from 'lodash';
 
-const { width, height } = Dimensions.get('window');
-
 export default class location extends Component {
 
   constructor(props) {
@@ -26,7 +24,7 @@ export default class location extends Component {
   }
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, navigation: { state: { params: { onReload } } } } = this.props;
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
         <LocationView
@@ -35,6 +33,7 @@ export default class location extends Component {
             latitude: 37.78825,
             longitude: -122.4324,
           }}
+          onReload={onReload}
           navigation={navigation}
         />
       </SafeAreaView>

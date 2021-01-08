@@ -5,6 +5,8 @@ const addCrop = (params) => axiosCallApi('/appcontent/cropsUser/add-crops-user',
 const searchCrop = (params) => axiosCallApi('/appcontent/cropsPost/search-crops-post', 'post', params);
 const getWeather24 = (params) => axiosCallApi('/app_weather/get_weather', 'post', params);
 const getWeatherList = (params) => axiosCallApi('/app_weather/location/list', 'post', params);
+const addWeather = (params) => axiosCallApi('/app_weather/location/insert', 'post', params);
+const deleteWeather = (params) => axiosCallApi('/app_weather/location/delete', 'post', params);
 
 export default {
   getWeather,
@@ -12,4 +14,6 @@ export default {
   searchCrop,
   getWeather24,
   getWeatherList,
+  addWeather,
+  deleteWeather,
 };
