@@ -42,6 +42,16 @@ export const windUnit = async () => {
   return 'm/s'
 }
 
+export const formatUv = (uv) => {
+  if (uv == null) return "-";
+  else if (uv >= 0 && uv <= 2) return "Thấp";
+  else if (uv >= 3 && uv <= 5) return "Trung bình";
+  else if (uv >= 6 && uv <= 7) return "Cao";
+  else if (uv >= 8 && uv <= 10) return "Rất cao";
+  else if (uv >= 11) return "Nguy hại";
+  else return "-";
+}
+
 export const weatherImage = (image) => {
   let images = [
     require('../../assets/images/ico_01.png'),
