@@ -69,6 +69,7 @@ export default class main extends React.PureComponent {
     this.currentPage = 0;
     this.navigation = null;
     this.onReloadData = this.onReloadData.bind(this)
+    this.onTabChange = this.onTabChange.bind(this)
   }
 
   params() {
@@ -86,6 +87,10 @@ export default class main extends React.PureComponent {
 
   onReloadData() {
     this.getCurrentLocation()
+  }
+
+  onTabChange(route) {
+    this.navigation.didChangeTab(route)
   }
 
   getCurrentLocation() {
@@ -161,11 +166,11 @@ export default class main extends React.PureComponent {
             if (this.params().add == true) {
               this.props.navigation.pop();
             } else {
-              NavigationService.navigate('LocationListScreen', { onReload: () => this.onReloadData() });
+              NavigationService.navigate('LocationListScreen', { onReload: () => this.onReloadData(), onChangeTab: (route) => this.onTabChange(route) });
             }
           }}>
             <Image
-              style={{ width: 40, height: 40 }}
+              style={{ width: 35, height: 35 }}
               source={this.params().add == true ? require('../../assets/images/back_color.png') : require('../../assets/images/ico_place.png')}
             />
           </TouchableOpacity>
@@ -180,7 +185,7 @@ export default class main extends React.PureComponent {
             }
           }}>
             <Image
-              style={{ width: 40, height: 40 }}
+              style={{ width: 35, height: 35 }}
               source={this.params().add == true ? require('../../assets/images/ico_add.png') : require('../../assets/images/ico_setting.png')}
             />
           </TouchableOpacity>
@@ -189,7 +194,7 @@ export default class main extends React.PureComponent {
           <TopTab
             locationList={locationList}
             tabChange={(e) => {
-              this._header.didChangeText(locationList[e].location_name)
+              this._header.didChangeText(locationList[e] && locationList[e].location_name || '')
               this._background.didChangeImage(e)
             }}
             navi={(navigation) => this.navigation = navigation}

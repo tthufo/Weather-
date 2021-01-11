@@ -55,7 +55,7 @@ export default class weather24 extends Component {
       })
       setTimeout(() => {
         this.setState({ weather: weather.data.result.reverse() });
-      }, 500)
+      }, 800)
     } catch (e) {
       this.setState({ loading: false });
       console.log(e)

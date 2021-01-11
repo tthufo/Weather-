@@ -1,28 +1,56 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { Container, Content, Text } from 'native-base';
 import NavigationService from '../../service/navigate';
-import { temperature, tempUnit } from '../Utils/helper';
+import { temperature, tempUnit, windUnit, wind, formatUv } from '../Utils/helper';
 import IC from '../elements/icon';
 import API from '../apis';
 import _ from 'lodash';
 import Header from './header';
 import Weather24 from '../Main_24H';
 
-const CON = ({ image, title, value }) => {
-  return (
-    <View style={{ alignItems: 'center', margin: 10 }}>
-      <Image
-        style={{ width: 45, height: 45, margin: 10 }}
-        source={image}
-      />
-      <Text style={{ fontSize: 35, color: 'white' }}>{value}</Text>
-      <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>{title}</Text>
-    </View>
-  );
-};
+function Winding(deg) {
+  if (deg == null) return { 'direction': "-", 'icon': require('../../assets/images/bg_blur.png') };
+  else if (deg >= 11.25 && deg < 33.75) return { 'direction': "BĐB", 'icon': require('../../assets/images/NE.png') };
+  else if (deg >= 33.75 && deg < 56.25) return { 'direction': "ĐB", 'icon': require('../../assets/images/NE.png') };
+  else if (deg >= 56.25 && deg < 78.75) return { 'direction': "ĐĐB", 'icon': require('../../assets/images/NE.png') };
+  else if (deg >= 78.75 && deg < 101.25) return { 'direction': "Đ", 'icon': require('../../assets/images/E.png') };
+  else if (deg >= 101.25 && deg < 123.75) return { 'direction': "ĐĐN", 'icon': require('../../assets/images/SE.png') };
+  else if (deg >= 123.75 && deg < 146.25) return { 'direction': "ĐN", 'icon': require('../../assets/images/SE.png') };
+  else if (deg >= 146.25 && deg < 168.75) return { 'direction': "NĐN", 'icon': require('../../assets/images/SE.png') };
+  else if (deg >= 168.75 && deg < 191.25) return { 'direction': "N", 'icon': require('../../assets/images/S.png') };
+  else if (deg >= 191.25 && deg < 213.75) return { 'direction': "NTN", 'icon': require('../../assets/images/SW.png') };
+  else if (deg >= 213.75 && deg < 236.25) return { 'direction': "TN", 'icon': require('../../assets/images/SW.png') };
+  else if (deg >= 236.25 && deg < 258.75) return { 'direction': "TTN", 'icon': require('../../assets/images/SW.png') };
+  else if (deg >= 258.75 && deg < 281.25) return { 'direction': "T", 'icon': require('../../assets/images/W.png') };
+  else if (deg >= 281.25 && deg < 303.75) return { 'direction': "TTB", 'icon': require('../../assets/images/NW.png') };
+  else if (deg >= 303.75 && deg < 326.25) return { 'direction': "TB", 'icon': require('../../assets/images/NW.png') };
+  else if (deg >= 326.25 && deg < 348.75) return { 'direction': "BTB", 'icon': require('../../assets/images/NW.png') };
+  else if (deg >= 348.75 || deg < 11.25) return { 'direction': "B", 'icon': require('../../assets/images/N.png') };
+  else return { 'direction': "-", 'icon': require('../../assets/images/bg_blur.png') };
+}
 
-const SUMMARY = ({ image, title }) => {
+function AQI(deg) {
+  if (deg == null) return { 'direction': "-", 'icon': require('../../assets/images/bg_blur.png') };
+  else if (deg >= 0 && deg < 50) return { 'direction': "Tốt", 'icon': require('../../assets/images/NE.png') };
+  else if (deg >= 51 && deg < 100) return { 'direction': "Trung Bình", 'icon': require('../../assets/images/NE.png') };
+  else if (deg >= 101 && deg < 150) return { 'direction': "Kém", 'icon': require('../../assets/images/NE.png') };
+  else if (deg >= 151 && deg < 200) return { 'direction': "Xấu", 'icon': require('../../assets/images/E.png') };
+  else if (deg >= 201 && deg < 300) return { 'direction': "Rất Xấu", 'icon': require('../../assets/images/SE.png') };
+  else if (deg >= 301 && deg < 500) return { 'direction': "Nguy Hại", 'icon': require('../../assets/images/SE.png') };
+  else return { 'direction': "-", 'icon': require('../../assets/images/bg_blur.png') };
+}
+
+
+const CONFIG = [
+  { title: 'Độ ẩm', key: 'relative_humidity', unit: '%' },
+  { title: 'Gió', key: 'winding' },
+  { title: 'Tầm nhìn', key: 'visibility', unit: 'km' },
+  { title: 'Điểm sương', key: 'dew_point', unit: '°' },
+  { title: 'UV', key: 'uvIndex', unit: '' },
+  { title: 'AQI', key: 'aqi', unit: '' }]
+
+const SUMMARY = ({ data }) => {
   return (
     <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 330, justifyContent: 'flex-start', alignItems: 'center' }}>
       <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
@@ -39,7 +67,7 @@ const SUMMARY = ({ image, title }) => {
             {'Mặt trời mọc'}
           </Text>
           <Text style={{ color: 'white' }}>
-            {'11:11'}
+            {data.sunrise || ''}
           </Text>
         </View>
         <View style={{}}>
@@ -47,27 +75,37 @@ const SUMMARY = ({ image, title }) => {
             {'Mặt trời lặn'}
           </Text>
           <Text style={{ color: 'white' }}>
-            {'11:00'}
+            {data.sunset || ''}
           </Text>
         </View>
       </View>
 
       <View style={{ width: '99%', flexDirection: 'row', paddingRight: 5, paddingLeft: 5, flexWrap: 'wrap' }}>
-        {['', '', '', '', '', ''].map(item =>
+        {CONFIG.map(item =>
           <View style={{ width: '50%', marginBottom: 12 }}>
             <Text style={{ color: '#A0B7DB', marginBottom: 5, fontSize: 16 }}>
-              {'GIÓ'}
+              {item.title}
             </Text>
-            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
-              {'11:00'}
-            </Text>
+            {item.key == 'winding' ?
+              <Text style={{ color: 'white', fontSize: 16 }}>
+                {Winding(data.wind_direction).direction} {data[item.key]} {data.wind_unit}
+              </Text>
+              : item.key == 'uvIndex' ?
+                <Text style={{ color: 'white', fontSize: 16 }}>
+                  {data[item.key]} {formatUv(data[item.key])}{item.unit}
+                </Text> : item.key == 'aqi' ?
+                  <Text style={{ color: 'white', fontSize: 16 }}>
+                    {data[item.key] || '-'} {AQI(Math.round(data[item.key])).direction}
+                  </Text> :
+                  <Text style={{ color: 'white', fontSize: 16 }}>
+                    {data[item.key] || '-'} {item.unit}
+                  </Text>}
           </View>
         )}
       </View>
     </View>
   );
 };
-
 
 const COLOR = ["#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB", "#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB"]
 
@@ -107,7 +145,9 @@ export default class weather extends React.PureComponent {
         (async () => {
           e['temperature'] = await temperature(e.air_temperature)
           e['temperature_feeling'] = await temperature(e.temperature_feel)
+          e['winding'] = await wind(e.wind_speed)
           e['temp_unit'] = await tempUnit()
+          e['wind_unit'] = await windUnit()
         })()
       })
       setTimeout(() => {
@@ -118,8 +158,9 @@ export default class weather extends React.PureComponent {
           if (this._weather) {
             this._weather.didReload()
           }
+          console.log(this.state.weather)
         });
-      }, 500)
+      }, 800)
     } catch (e) {
       this.setState({ loading: false });
       console.log(e)
@@ -167,7 +208,7 @@ export default class weather extends React.PureComponent {
             </View>
           </TouchableOpacity>
 
-          <SUMMARY />
+          <SUMMARY data={weather} />
 
         </Content>
       </Container>

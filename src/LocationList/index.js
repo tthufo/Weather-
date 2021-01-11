@@ -124,7 +124,7 @@ export default class locationlist extends Component {
 
   render() {
     const { weather, loading, isRefreshing } = this.state;
-    const { navigation } = this.props;
+    const { navigation, navigation: { state: { params: { onChangeTab } } } } = this.props;
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <Header navigation={navigation} color={'transparent'} title='Quản lý địa điểm' />
@@ -155,7 +155,12 @@ export default class locationlist extends Component {
                 backgroundColor: 'transparent',
                 onPress: () => setTimeout(() => this.deleteLocation(item.location_id), 500),
               }]}>
-                <CELL data={item} onPress={() => console.log('sád')} />
+                <CELL data={item} onPress={() => {
+                  navigation.pop()
+                  if (onChangeTab) {
+                    onChangeTab(String(item.location_id))
+                  }
+                }} />
               </Swipeout>
             )}
             keyExtractor={(item, index) => index}

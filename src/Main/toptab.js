@@ -24,7 +24,7 @@ const TabBar = ({ props, getPos, navi }) => {
       }}>
         {navigationState.routes.map((route, index) => {
           return (
-            <View style={{ margin: 5, borderColor: 'white', borderWidth: navigationState.index == index ? 1 : 0, borderRadius: 4, backgroundColor: navigationState.index == index ? 'transparent' : 'white', width: 8, height: 8 }} />
+            <View style={{ margin: 5, borderColor: 'white', borderWidth: navigationState.index != index ? 1 : 0, borderRadius: 4, backgroundColor: navigationState.index != index ? 'transparent' : 'white', width: 8, height: 8 }} />
           )
         })}
       </View>
