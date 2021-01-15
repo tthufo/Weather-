@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
-  View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, NativeModules, ActivityIndicator, PermissionsAndroid, Alert,
+  View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions,
+  NativeModules, ActivityIndicator, PermissionsAndroid, Alert,
   RefreshControl, TextInput, KeyboardAvoidingView, Keyboard, SafeAreaView,
 } from 'react-native';
 import { Text } from 'native-base';

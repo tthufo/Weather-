@@ -32,19 +32,19 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Bác sỹ cây trồng cần truy cập Máy ảnh của bạn cho việc cập nhật thông tin câu hỏi.</string>
+	<string>WeatherPlus cần truy cập Máy ảnh của bạn cho việc cập nhật thông tin câu hỏi.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Bác sỹ cây trồng cần truy cập vị trí của bạn cho việc định vị vùng thời tiết nhanh chóng nhất</string>
+	<string>WeatherPlus cần truy cập vị trí của bạn cho việc định vị vùng thời tiết nhanh chóng nhất</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Bác sỹ cây trồng cần truy cập vị trí của bạn cho việc định vị vùng thời tiết nhanh chóng nhất</string>
+	<string>WeatherPlus cần truy cập vị trí của bạn cho việc định vị vùng thời tiết nhanh chóng nhất</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Bác sỹ cây trồng cần truy cập vị trí của bạn cho việc định vị vùng thời tiết nhanh chóng nhất</string>
+	<string>WeatherPlus cần truy cập vị trí của bạn cho việc định vị vùng thời tiết nhanh chóng nhất</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Bác sỹ cây trồng cần sử dụng Micro của bạn cho việc thu âm.</string>
+	<string>WeatherPlus cần sử dụng Micro của bạn cho việc thu âm.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Bác sỹ cây trồng cần truy cập Bộ sưu tập ảnh của bạn cho việc cập nhật thông tin câu hỏi.</string>
+	<string>WeatherPlus cần truy cập Bộ sưu tập ảnh của bạn cho việc cập nhật thông tin câu hỏi.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Bác sỹ cây trồng cần truy cập Bộ sưu tập ảnh của bạn cho việc cập nhật thông tin câu hỏi.</string>
+	<string>WeatherPlus cần truy cập Bộ sưu tập ảnh của bạn cho việc cập nhật thông tin câu hỏi.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>pingfang.ttf</string>

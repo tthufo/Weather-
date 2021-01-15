@@ -107,7 +107,7 @@ export default class main extends React.PureComponent {
     this.setState({ loading: true });
     try {
       const weather = await API.home.getWeatherList({
-        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        device_id: DeviceInfo.getUniqueId(),
         weather: null,
       });
       this.setState({ loading: false });
@@ -155,7 +155,7 @@ export default class main extends React.PureComponent {
     this.setState({ loading: true });
     try {
       const weather = await API.home.addWeather({
-        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        device_id: DeviceInfo.getUniqueId(),
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude,
         location_name: currentLocation.location_name,

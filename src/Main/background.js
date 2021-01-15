@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, Dimensions, Image } from 'react-native';
-import { View } from 'native-base';
+import { Dimensions, Image } from 'react-native';
+import IC from '../elements/icon';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,17 +26,23 @@ export default class background extends Component {
 
   render() {
     const { image } = this.state;
+    var d = new Date();
+    var h = d.getHours();
+    const ICON = h <= 19 && h >= 7 ? IC.DAY_BG : IC.NIGHT_BG
+    const ICON_DEFAULT = h <= 19 && h >= 7 ? IC.DEFAULT_BG_DAY : IC.DEFAULT_BG_NIGHT
+    const imaging = ICON[image] && ICON[image].icon
+    console.log(ICON[image])
     return (
       <Image
-        style={{ 
-          width: width, 
-          height: height, 
-          resizeMode: 'cover', 
-          position: 'absolute', 
-          top: 0, 
-          left: 0 
-          }}
-        source={image == 0 ? require(`../../assets/images/bg_06.png`) : require(`../../assets/images/bg_03.png`)}
+        style={{
+          width: width,
+          height: height,
+          resizeMode: 'cover',
+          position: 'absolute',
+          top: 0,
+          left: 0
+        }}
+        source={imaging || ICON_DEFAULT}
       />
     );
   }

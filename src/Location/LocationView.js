@@ -122,13 +122,12 @@ export default class LocationView extends React.Component {
   };
 
   _getCurrentLocation = () => {
-    // const { timeout, maximumAge, enableHighAccuracy } = this.props;
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 15000,
     })
       .then(location => {
-        console.log(location);
+        console.log(location)
         this._setRegion({ latitude: location.latitude, longitude: location.longitude });
       })
       .catch(error => {
@@ -170,12 +169,12 @@ export default class LocationView extends React.Component {
               getAddress={(address, location) => this.setState({ address, location })}
             />
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.currentLocBtn, { backgroundColor: this.props.markerColor }]}
             onPress={this._getCurrentLocation}
           >
             <MaterialIcons name={'my-location'} color={'white'} size={25} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <View
             style={styles.actionButton}
           >

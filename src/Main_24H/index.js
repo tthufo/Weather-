@@ -68,13 +68,14 @@ export default class weather24 extends Component {
     return (
       <View style={{ flexDirection: 'column' }}>
         <View style={{ flex: 1, alignItems: 'flex-end', paddingRight: 10 }}>
-          <TouchableOpacity onPress={() => {
-            NavigationService.navigate('Main24DetailScreen', { weatherData: weather, locationName })
-          }}>
-            <Text style={{ color: 'white' }}>
-              {'XEM THÊM'}
-            </Text>
-          </TouchableOpacity>
+          {weather.length != 0 &&
+            <TouchableOpacity onPress={() => {
+              NavigationService.navigate('Main24DetailScreen', { weatherData: weather, locationName })
+            }}>
+              <Text style={{ color: 'white' }}>
+                {'XEM THÊM'}
+              </Text>
+            </TouchableOpacity>}
         </View>
         <View style={{ flex: 1 }}>
           {loading ? <ActivityIndicator size="large" color="white" style={{ margin: 5 }} />

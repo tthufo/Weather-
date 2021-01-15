@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, RefreshControl, Image } from 'react-native';
 import { Container, Content, Text } from 'native-base';
 import NavigationService from '../../service/navigate';
 import { temperature, tempUnit, windUnit, wind, formatUv } from '../Utils/helper';
@@ -56,8 +56,15 @@ const SUMMARY = ({ data }) => {
       <View style={{ borderRadius: 14, backgroundColor: 'white', opacity: 0.3, width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
 
 
-      <View style={{ backgroundColor: 'green', width: '99%', height: 80, margin: 5 }}>
-        <Text>image</Text>
+      <View style={{ width: '99%', height: 80, margin: 5 }}>
+        <Image
+          style={{
+            width: '100%',
+            height: '100%',
+            resizeMode: 'contain',
+          }}
+          source={require('../../assets/images/sunrise_set.png')}
+        />
       </View>
 
 
@@ -130,6 +137,7 @@ export default class weather extends React.PureComponent {
   }
 
   async getWeather(location) {
+    const { onChangeBackground } = this.props;
     this.setState({ loading: true });
     try {
       const weather = await API.home.getWeather24({
@@ -158,7 +166,9 @@ export default class weather extends React.PureComponent {
           if (this._weather) {
             this._weather.didReload()
           }
-          console.log(this.state.weather)
+          if (onChangeBackground) {
+            onChangeBackground(this.state.weather.weather)
+          }
         });
       }, 800)
     } catch (e) {
@@ -170,7 +180,7 @@ export default class weather extends React.PureComponent {
   render() {
     const { weather, loading } = this.state;
     const { latitude, longitude, location_name } = this.props;
-    const ready = Object.keys(weather).length != 0
+    const ready = weather && Object.keys(weather).length != 0
     var d = new Date();
     var h = d.getHours();
     const ICON = h <= 19 && h >= 7 ? IC.DAY : IC.NIGHT
@@ -185,6 +195,7 @@ export default class weather extends React.PureComponent {
               tintColor="white"
             />}
         >
+
           {/* <View style={{ backgroundColor: 'transparent', flex: 1, padding: 5, flexDirection: 'row', justifyContent: 'center' }}>
             <Text style={{ fontSize: 60, color: 'white' }}>{ready && weather.temperature || '-'}</Text>
             <Text style={{ fontSize: 30, color: 'white' }}>{ready && weather.temp_unit}</Text>
@@ -193,11 +204,12 @@ export default class weather extends React.PureComponent {
             <Text style={{ fontSize: 17, color: 'white', fontWeight: 'bold', marginBottom: 10 }}>{ready && ICON[Math.round(weather.weather) - 1].name || '-'}</Text>
             <Text style={{ fontSize: 16, color: 'white' }}>{`Cảm nhận ${ready && weather.temperature_feeling || '-'}${ready && weather.temp_unit || ''}`} </Text>
           </View> */}
+
           {ready && <Header onRef={component => this._header = component} />}
 
           <Weather24 onRef={component => this._weather = component} locationName={location_name} latLong={{ lat: latitude, lng: longitude }} />
 
-          <TouchableOpacity onPress={() => {
+          {ready && <TouchableOpacity onPress={() => {
             NavigationService.navigate('Main14DayScreen', { locationName: location_name, latLong: { lat: latitude, lng: longitude } })
           }}>
             <View style={{ borderRadius: 14, margin: 15, backgroundColor: 'tranparent', flex: 1, height: 50, justifyContent: 'center', alignItems: 'center' }}>
@@ -206,9 +218,9 @@ export default class weather extends React.PureComponent {
                 {'14 Ngày Tới'}
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
-          <SUMMARY data={weather} />
+          {ready && <SUMMARY data={weather} />}
 
         </Content>
       </Container>

@@ -1,16 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView } from 'react-native';
-import { Container, Content, Button, Text } from 'native-base';
-import GetLocation from 'react-native-get-location'
-import STG from '../../service/storage';
-import API from '../apis';
-import HOST from '../apis/host';
-import axios from 'axios';
-import Toast from 'react-native-simple-toast';
-import { Header } from '../elements';
-import IC from '../elements/icon';
-import NavigationService from '../../service/navigate';
-import Address from '../elements/Address';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import LocationView from './LocationView'
 import _ from 'lodash';
 
@@ -20,9 +9,6 @@ export default class location extends Component {
     super(props);
   }
 
-  componentDidMount() {
-  }
-
   render() {
     const { navigation, navigation: { state: { params: { onReload } } } } = this.props;
     return (
@@ -30,8 +16,8 @@ export default class location extends Component {
         <LocationView
           apiKey={"AIzaSyBXBWoCCozdvmjRABdP_VfDiPAsSU1WS2Q"}
           initialLocation={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: 21.028511,
+            longitude: 105.804817,
           }}
           onReload={onReload}
           navigation={navigation}

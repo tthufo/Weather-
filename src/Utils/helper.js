@@ -32,14 +32,14 @@ export const windUnit = async () => {
   let w = await STG.getData('wind')
 
   if (w && w.wind && w.wind == '1') {
-    return 'm/s'
-  }
-
-  if (w && w.wind && w.wind == '2') {
     return 'km/h'
   }
 
-  return 'm/s'
+  if (w && w.wind && w.wind == '2') {
+    return 'm/s'
+  }
+
+  return 'km/h'
 }
 
 export const tempUnit = async () => {

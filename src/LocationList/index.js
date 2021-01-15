@@ -3,18 +3,18 @@ import { View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, SafeAr
 import { Text } from 'native-base';
 import API from '../apis';
 import { Header } from '../elements';
-import IC from '../elements/icon';
 import NavigationService from '../../service/navigate';
 import { temperature, weatherImage } from '../Utils/helper';
 import Swipeout from 'react-native-swipeout';
+import DeviceInfo from 'react-native-device-info';
 import _ from 'lodash';
 
-const { width, height } = Dimensions.get('window');
+const COLORS = ['#426C91', '#2B4581', '#4D86FF', '#EAB152']
 
-const CELL = ({ data, onPress }) => {
+const CELL = ({ data, onPress, color }) => {
   return (
     <TouchableOpacity style={{ flex: 1, marginRight: 15, marginLeft: 15, marginBottom: 10 }} onPress={onPress}>
-      <View style={{ paddingTop: 15, paddingBottom: 15, flex: 1, backgroundColor: '#4B8266', flexDirection: 'row', alignItems: 'center', borderRadius: 15, padding: 5 }}>
+      <View style={{ paddingTop: 15, paddingBottom: 15, flex: 1, backgroundColor: color, flexDirection: 'row', alignItems: 'center', borderRadius: 15, padding: 5 }}>
         <View style={{ flex: 1 }}>
           <Text style={{ marginLeft: 8, flex: 1, fontSize: 18, color: 'white', flexWrap: 'wrap', fontWeight: 'bold', marginBottom: 5 }}>
             {data.location_name && data.location_name.split('-')[0] || ''}
@@ -56,12 +56,7 @@ export default class locationlist extends Component {
   }
 
   componentWillUnmount() {
-    // const { navigation: { state: { params: { onReload } } } } = this.props;
-    // if (this.state.isEdited) {
-    //   if (onReload) {
-    //     onReload()
-    //   }
-    // }
+
   }
 
   onReloadData() {
@@ -101,7 +96,7 @@ export default class locationlist extends Component {
     this.setState({ loading: true, isRefreshing: true });
     try {
       const weather = await API.home.getWeatherList({
-        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        device_id: DeviceInfo.getUniqueId(),
         weather: true,
       });
       this.setState({ loading: false, isRefreshing: false });
@@ -114,7 +109,7 @@ export default class locationlist extends Component {
         })()
       })
       setTimeout(() => {
-        this.setState({ weather: weather.data.result.reverse() });
+        this.setState({ weather: weather.data.result });
       }, 500)
     } catch (e) {
       this.setState({ loading: false, isRefreshing: false });
@@ -123,7 +118,7 @@ export default class locationlist extends Component {
   }
 
   render() {
-    const { weather, loading, isRefreshing } = this.state;
+    const { weather, isRefreshing } = this.state;
     const { navigation, navigation: { state: { params: { onChangeTab } } } } = this.props;
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -135,7 +130,7 @@ export default class locationlist extends Component {
             <View style={{ alignItems: 'center', height: 40, margin: 15, borderRadius: 40, backgroundColor: '#DFECFF', flexDirection: 'row' }}>
               <Image
                 style={{ height: 35, width: 35 }}
-                source={require('../../assets/images/ic_humidity_one.png')}
+                source={require('../../assets/images/mag.png')}
               />
               <Text>
                 {'Nhập vị trí cần tìm kiếm'}
@@ -160,7 +155,7 @@ export default class locationlist extends Component {
                   if (onChangeTab) {
                     onChangeTab(String(item.location_id))
                   }
-                }} />
+                }} color={COLORS[index % 4]} />
               </Swipeout>
             )}
             keyExtractor={(item, index) => index}

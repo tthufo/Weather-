@@ -77,7 +77,7 @@ const MODAL = ({ data }) => {
         <View style={{ height: 35, width: 35 }} />
         <Text style={{ color: 'black', fontSize: 15, fontWeight: 'normal' }}>{data.week_day}, {data.day}</Text>
         <Image
-          style={{ height: 35, width: 35 }}
+          style={{ height: 35, width: 35, opacity: 0 }}
           source={require('../../assets/images/rain_probalility.png')}
         />
       </View>
@@ -106,7 +106,7 @@ const MODAL = ({ data }) => {
                   </Text>
               }
             </View>
-            <View style={{ width: '100%', height: 1, backgroundColor: 'black' }} />
+            <View style={{ width: '100%', height: 0.5, backgroundColor: 'black' }} />
           </View>
         ))}
       </View>
@@ -246,7 +246,7 @@ export default class weather extends Component {
                   <View style={{ flexDirection: 'row' }}>
                     <Image
                       style={{ height: 20, width: 20 }}
-                      source={require('../../assets/images/rain_probalility.png')}
+                      source={require('../../assets/images/rain_probalility_dark.png')}
                     />
                     <Text style={{ fontSize: 14, color: 'black', textAlign: 'center' }}>{Math.round(item.probability_rain)}%</Text>
                   </View>

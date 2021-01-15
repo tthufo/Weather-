@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Dimensions, SafeAreaView, Text } from 'react-native';
 import GetLocation from 'react-native-get-location'
-import STG from '../../service/storage';
 import API from '../apis';
-import HOST from '../apis/host';
 import axios, { CancelToken } from 'axios';
-import Toast from 'react-native-simple-toast';
-import { Header } from '../elements';
-import IC from '../elements/icon';
 import NavigationService from '../../service/navigate';
 import _ from 'lodash';
 import TopTab from './toptab';
-import MarqueeLabel from 'react-native-lahk-marquee-label';
 import DeviceInfo from 'react-native-device-info';
 import Heading from './header';
 import BackGround from './background';
@@ -63,13 +57,14 @@ export default class main extends React.PureComponent {
       loading: true,
       page: 0,
       currentLocation: {},
-      locationName: 'WeatherPlus'
+      locationName: 'WeatherPlus',
     };
 
     this.currentPage = 0;
     this.navigation = null;
     this.onReloadData = this.onReloadData.bind(this)
     this.onTabChange = this.onTabChange.bind(this)
+    this.backgroundList = []
   }
 
   params() {
@@ -113,7 +108,7 @@ export default class main extends React.PureComponent {
     this.setState({ loading: true });
     try {
       const weather = await API.home.getWeatherList({
-        device_id: 'b43bb6dc61d9fa9c', //getUniqueId(),
+        device_id: DeviceInfo.getUniqueId(),
         weather: null,
       });
       this.setState({ loading: false });
@@ -148,9 +143,6 @@ export default class main extends React.PureComponent {
           if (this._header) {
             this._header.didChangeText(currentAddress)
           }
-          if (this._background) {
-            this._background.didChangeImage('bg_06')
-          }
           this.setState({ currentLocation: { location_id: -1, location_name: currentAddress, latitude, longitude, device_id: DeviceInfo.getUniqueId() } }, () => this.getLocation())
         }
       });
@@ -181,7 +173,7 @@ export default class main extends React.PureComponent {
             if (this.params().add == true) {
               this.props.navigation.pop();
             } else {
-              // NavigationService.navigate('LocationListScreen', {}); 
+              NavigationService.navigate('SettingScreen', { onReload: () => this.onReloadData() });
             }
           }}>
             <Image
@@ -195,7 +187,14 @@ export default class main extends React.PureComponent {
             locationList={locationList}
             tabChange={(e) => {
               this._header.didChangeText(locationList[e] && locationList[e].location_name || '')
-              this._background.didChangeImage(e)
+              this.currentPage = e
+              if (this.backgroundList.length >= e) {
+                this._background.didChangeImage(this.backgroundList[e])
+              }
+            }}
+            backGroundChange={(bg) => {
+              this._background.didChangeImage(bg)
+              this.backgroundList[this.currentPage] = bg
             }}
             navi={(navigation) => this.navigation = navigation}
             onRef={(ref) => this.navigation = ref}
