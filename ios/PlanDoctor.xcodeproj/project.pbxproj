@@ -741,15 +741,15 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = PlanDoctor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.weatherplus.bsct;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vn.weatherplus;
 				PRODUCT_NAME = PlanDoctor;
-				PROVISIONING_PROFILE_SPECIFIER = bsct_dev;
+				PROVISIONING_PROFILE_SPECIFIER = "weather+_dev";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -768,15 +768,15 @@
 				DEVELOPMENT_TEAM = 7546H2CFFT;
 				INFOPLIST_FILE = PlanDoctor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.weatherplus.bsct;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vn.weatherplus;
 				PRODUCT_NAME = PlanDoctor;
-				PROVISIONING_PROFILE_SPECIFIER = bsct_production;
+				PROVISIONING_PROFILE_SPECIFIER = "weather+_pro";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

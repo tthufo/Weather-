@@ -64,11 +64,13 @@ export default class main extends React.PureComponent {
       loading: true,
       page: 0,
       currentLocation: {},
-      locationName: 'WeatherPlus'
+      locationName: 'WeatherPlus',
+      disable: false,
     };
 
     this.currentPage = 0;
     this.navigation = null;
+    this.backgroundList = []
   }
 
   params() {
@@ -141,9 +143,6 @@ export default class main extends React.PureComponent {
           if (this._header) {
             this._header.didChangeText(currentAddress)
           }
-          if (this._background) {
-            this._background.didChangeImage('bg_06')
-          }
           this.setState({ currentLocation: { location_id: -1, location_name: currentAddress, latitude, longitude, device_id: DeviceInfo.getUniqueId() } }, () => this.getLocation())
         }
       });
@@ -175,7 +174,7 @@ export default class main extends React.PureComponent {
   }
 
   render() {
-    const { locationList } = this.state;
+    const { locationList, disable } = this.state;
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <BackGround onRef={component => this._background = component} />
@@ -195,26 +194,34 @@ export default class main extends React.PureComponent {
           <View style={{ justifyContent: 'center' }}>
             <Heading onRef={component => this._header = component} />
           </View>
-          <TouchableOpacity onPress={() => {
-            if (this.params().add == true) {
-              this.addLocation()
-            } else {
-              // NavigationService.navigate('LocationListScreen', {}); 
-            }
-          }}>
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={this.params().add == true ? require('../../assets/images/ico_add.png') : require('../../assets/images/ico_setting.png')}
-            />
-          </TouchableOpacity>
+          {disable ? <View style={{ width: 40, height: 40 }} /> :
+            <TouchableOpacity onPress={() => {
+              if (this.params().add == true) {
+                this.addLocation()
+              }
+            }}>
+              <Image
+                style={{ width: 40, height: 40 }}
+                source={this.params().add == true ? require('../../assets/images/ico_add.png') : require('../../assets/images/ico_setting.png')}
+              />
+            </TouchableOpacity>
+          }
         </View>
         {locationList.length != 0 &&
           <TopTab
             locationList={locationList}
             tabChange={(e) => {
               this._header.didChangeText(locationList[e].location_name)
-              this._background.didChangeImage(e)
+              this.currentPage = e
+              if (this.backgroundList.length >= e) {
+                this._background.didChangeImage(this.backgroundList[e])
+              }
             }}
+            backGroundChange={(bg) => {
+              this._background.didChangeImage(bg)
+              this.backgroundList[this.currentPage] = bg
+            }}
+            onDisable={() => this.setState({ disable: true })}
             navi={(navigation) => this.navigation = navigation}
             onRef={(ref) => this.navigation = ref}
           />}

@@ -14,37 +14,6 @@ const REVRSE_GEO_CODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 const API_KEY = 'AIzaSyBXBWoCCozdvmjRABdP_VfDiPAsSU1WS2Q';
 
-const { width, height } = Dimensions.get('window');
-
-const CON = ({ image, title, value }) => {
-  return (
-    <View style={{ alignItems: 'center', margin: 10 }}>
-      <Image
-        style={{ width: 45, height: 45, margin: 10 }}
-        source={image}
-      />
-      <Text style={{ fontSize: 35, color: 'white' }}>{value}</Text>
-      <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>{title}</Text>
-    </View>
-  );
-};
-
-const BUT = ({ image, title, onPress }) => {
-  return (
-    <TouchableOpacity style={{ flex: 1, }} onPress={onPress}>
-      <View style={{ flex: 1, backgroundColor: '#4B8266', flexDirection: 'row', alignItems: 'center', margin: 10, padding: 10, borderRadius: 8 }}>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={image}
-        />
-        <Text style={{ marginLeft: 8, flex: 1, fontSize: 16, color: 'white', flexWrap: 'wrap' }}>{title}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const COLOR = ["#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB", "#DFEEB6", "#E9DEB3", "#F1D4B7", "#DCE5CB"]
-
 const DEFAULT = { location_id: -1, location_name: 'Hanoi - Vietnam', latitude: 21.028511, longitude: 105.804817, device_id: DeviceInfo.getUniqueId() }
 
 export default class main extends React.PureComponent {

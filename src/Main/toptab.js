@@ -59,7 +59,7 @@ export default class mytabs extends Component {
   }
 
   render() {
-    const { tabChange, backGroundChange } = this.props;
+    const { tabChange, backGroundChange, onDisable } = this.props;
     const { locationList } = this.state;
     return (
       <NavigationContainer>
@@ -87,7 +87,7 @@ export default class mytabs extends Component {
             return (
               <Tab.Screen
                 name={String(item.location_id)}
-                component={() => <Weather {...item} onChangeBackground={backGroundChange} />}
+                component={() => <Weather {...item} onDisable={onDisable} onChangeBackground={backGroundChange} />}
               />
             );
           })}

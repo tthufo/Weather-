@@ -103,13 +103,14 @@ export default class locationlist extends Component {
       if (weather.data.status != 200) {
         return
       }
+      console.log(weather)
       weather.data.result.map(e => {
         (async () => {
           e['temperature'] = await temperature(e.weather.air_temperature)
         })()
       })
       setTimeout(() => {
-        this.setState({ weather: weather.data.result });
+        this.setState({ weather: weather.data.result.filter(k => k.weather != null) });
       }, 500)
     } catch (e) {
       this.setState({ loading: false, isRefreshing: false });

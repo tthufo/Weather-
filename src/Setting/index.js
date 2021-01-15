@@ -48,7 +48,7 @@ const MODAL = ({ data, onPress }) => {
         <View style={{ height: 35, width: 35 }} />
         <Text style={{ color: 'black', fontSize: 15, fontWeight: 'normal' }}>{data.title}</Text>
         <Image
-          style={{ height: 35, width: 35 }}
+          style={{ height: 35, width: 35, opacity: 0 }}
           source={require('../../assets/images/rain_probalility.png')}
         />
       </View>

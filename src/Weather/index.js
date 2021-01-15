@@ -137,7 +137,7 @@ export default class weather extends React.PureComponent {
   }
 
   async getWeather(location) {
-    const { onChangeBackground } = this.props;
+    const { onChangeBackground, onDisable } = this.props;
     this.setState({ loading: true });
     try {
       const weather = await API.home.getWeather24({
@@ -147,6 +147,12 @@ export default class weather extends React.PureComponent {
       });
       this.setState({ loading: false });
       if (weather.data.status != 200) {
+        return
+      }
+      if (weather.data.result.length == 0) {
+        if (onDisable) {
+          onDisable()
+        }
         return
       }
       weather.data.result.map(e => {
